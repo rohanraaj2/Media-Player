@@ -1,5 +1,4 @@
 import java.io.File;
-import java.nio.file.InvalidPathException;
 
 public abstract class AudioFile {
 	
@@ -8,9 +7,7 @@ public abstract class AudioFile {
 	protected String author;
 	protected String title;
 	
-	public AudioFile() {
-		
-	}
+	public AudioFile() {}
 	
 	public AudioFile (String path) {
 
@@ -28,11 +25,10 @@ public abstract class AudioFile {
 	private boolean isWindows() {
 		 return System.getProperty("os.name").toLowerCase()
 		 .indexOf("win") >= 0;
-		}
+	}
 	
 	public void parsePathname(String path) {
-	    String temp = path.trim(); 
-
+	    String temp = path.trim();
 	    String slashes_changed;
 	    String slashes_repetition_fixed;
 	    int lastSlashIndex;
@@ -41,16 +37,16 @@ public abstract class AudioFile {
 	         
 	        pathname = temp.replace("‿", "");
 	        filename = pathname.substring(0);
-	    } else {
-	         
+	    } 
+	    else {
 	        slashes_repetition_fixed = temp.replaceAll("/+", "/");
 	        if (isWindows()) {
 	            slashes_changed = temp.replace("/", "\\");
-	            slashes_repetition_fixed = slashes_changed.replaceAll("\\\\\\\\+", "\\\\");
+	            slashes_repetition_fixed = removeExtraBackslashes(slashes_changed);
 	            lastSlashIndex = slashes_repetition_fixed.lastIndexOf("\\");
 	        } else {
 	            slashes_changed = temp.replace("\\", "/");
-	            slashes_repetition_fixed = slashes_changed.replaceAll("/+", "/");
+	            slashes_repetition_fixed = removeExtraForwardSlashes(slashes_changed);
 	            lastSlashIndex = slashes_repetition_fixed.lastIndexOf("/");
 	        }
 
@@ -72,8 +68,6 @@ public abstract class AudioFile {
 	        title = "";
 	        return; 
 	    }
-
-
 	    if (hyphenIndex != -1) {
 	      
 	        author = filename.substring(0, hyphenIndex).trim();
@@ -84,17 +78,49 @@ public abstract class AudioFile {
 	             
 	            title = filename.substring(hyphenIndex + 2).trim();
 	        }
-	    } else {
-	         
+	    } 
+	    else {     
 	        author = "";
-	        
 	        if (extensionIndex != -1) {
 	            title = filename.substring(0, extensionIndex).trim();
 	        } else {
-	             
 	            title = filename.trim();
 	        }
 	    }
+	}
+	
+	private String removeExtraBackslashes(String path) {
+	    StringBuilder result = new StringBuilder();
+	    boolean lastWasBackslash = false;
+	    for (char c : path.toCharArray()) {
+	        if (c == '\\') {
+	            if (!lastWasBackslash) {
+	                result.append(c);
+	            }
+	            lastWasBackslash = true;
+	        } else {
+	            result.append(c);
+	            lastWasBackslash = false;
+	        }
+	    }
+	    return result.toString();
+	}
+	
+	private String removeExtraForwardSlashes(String path) {
+	    StringBuilder result = new StringBuilder();
+	    boolean lastWasSlash = false;
+	    for (char c : path.toCharArray()) {
+	        if (c == '/') {
+	            if (!lastWasSlash) {
+	                result.append(c);
+	            }
+	            lastWasSlash = true;
+	        } else {
+	            result.append(c);
+	            lastWasSlash = false;
+	        }
+	    }
+	    return result.toString();
 	}
 	
 	public String getPathname() {
