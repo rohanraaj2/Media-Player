@@ -6,9 +6,7 @@ public class AudioFile {
 	private String author;
 	private String title;
 	
-	public AudioFile() {
-		
-	}
+	public AudioFile() {}
 	
 	public AudioFile (String path) {
 		parsePathname(path);
@@ -18,7 +16,7 @@ public class AudioFile {
 	private boolean isWindows() {
 		 return System.getProperty("os.name").toLowerCase()
 		 .indexOf("win") >= 0;
-		}
+	}
 	
 	public void parseFilename(String filename) {
 	    int hyphenIndex = filename.indexOf(" - ");
@@ -29,7 +27,6 @@ public class AudioFile {
 	        title = "";
 	        return; 
 	    }
-
 
 	    if (hyphenIndex != -1) {
 	      
@@ -42,15 +39,13 @@ public class AudioFile {
 	             
 	            title = filename.substring(hyphenIndex + 3).trim();
 	        }
-	    } else {
-	         
+	    }
+	    else {
 	        author = "";
-	        
-	         
 	        if (extensionIndex != -1) {
 	            title = filename.substring(0, extensionIndex).trim();
-	        } else {
-	             
+	        } 
+	        else {
 	            title = filename.trim();
 	        }
 	    }
@@ -67,17 +62,15 @@ public class AudioFile {
 	    int lastSlashIndex;
 
 	    if ((temp.indexOf('/') == -1) && (temp.indexOf('\\') == -1)) {
-	         
-	         
 	        pathname = temp.replace("‿", "").trim();
 	        filename = pathname.equals("-") ? "-" : pathname;
-	    } 
+	    }
 	    else {
 	        if (isWindows()) {
 	            slashes_changed = temp.replace("/", "\\").trim();
 	            slashes_repetition_fixed = removeExtraBackslashes(slashes_changed);
 	            lastSlashIndex = slashes_repetition_fixed.lastIndexOf("\\");
-	        } 
+	        }
 	        else {
 	            slashes_changed = temp.replace("\\", "/").trim();
 	            slashes_repetition_fixed = removeExtraForwardSlashes(slashes_changed);
@@ -85,20 +78,19 @@ public class AudioFile {
 	                    && slashes_repetition_fixed.charAt(1) == ':') {
 	            	slashes_repetition_fixed = "/" + slashes_repetition_fixed.charAt(0) + slashes_repetition_fixed.substring(2);
 	            }
+	            
 	            lastSlashIndex = slashes_repetition_fixed.lastIndexOf("/");
 	        }
-
-	         
+	        
 	        pathname = slashes_repetition_fixed.trim();
 	        if (lastSlashIndex != -1) {
 	            filename = pathname.substring(lastSlashIndex + 1).trim();
-	        } else {
+	        }
+	        else {
 	            filename = pathname.equals("-") ? "-" : pathname.trim();
 	        }
 	    }
 	}
-
-
 	
 	private String removeExtraBackslashes(String path) {
 	    StringBuilder result = new StringBuilder();
@@ -109,7 +101,8 @@ public class AudioFile {
 	                result.append(c);
 	            }
 	            lastWasBackslash = true;
-	        } else {
+	        }
+	        else {
 	            result.append(c);
 	            lastWasBackslash = false;
 	        }
@@ -126,7 +119,8 @@ public class AudioFile {
 	                result.append(c);
 	            }
 	            lastWasSlash = true;
-	        } else {
+	        }
+	        else {
 	            result.append(c);
 	            lastWasSlash = false;
 	        }
@@ -160,5 +154,6 @@ public class AudioFile {
 	}
 
 	public static void main(String[] args) {
-		}
+		
+	}
 }
