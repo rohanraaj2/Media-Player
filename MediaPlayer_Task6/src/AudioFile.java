@@ -68,27 +68,32 @@ public class AudioFile {
 
 	    if ((temp.indexOf('/') == -1) && (temp.indexOf('\\') == -1)) {
 	         
-	        pathname = temp.replace("‿", "");
-	        filename = pathname.substring(0);
-	    } else {
 	         
-	        slashes_repetition_fixed = temp.replaceAll("/+", "/");
+	        pathname = temp.replace("‿", "").trim();
+	        filename = pathname.equals("-") ? "-" : pathname;
+	    } 
+	    else {
 	        if (isWindows()) {
-	            slashes_changed = temp.replace("/", "\\");
+	            slashes_changed = temp.replace("/", "\\").trim();
 	            slashes_repetition_fixed = slashes_changed.replaceAll("\\\\\\\\+", "\\\\");
 	            lastSlashIndex = slashes_repetition_fixed.lastIndexOf("\\");
-	        } else {
-	            slashes_changed = temp.replace("\\", "/");
+	        } 
+	        else {
+	            slashes_changed = temp.replace("\\", "/").trim();
 	            slashes_repetition_fixed = slashes_changed.replaceAll("/+", "/");
+	            if (slashes_repetition_fixed.length() >= 2 && Character.isLetter(slashes_repetition_fixed.charAt(0))
+	                    && slashes_repetition_fixed.charAt(1) == ':') {
+	            	slashes_repetition_fixed = "/" + slashes_repetition_fixed.charAt(0) + slashes_repetition_fixed.substring(2);
+	            }
 	            lastSlashIndex = slashes_repetition_fixed.lastIndexOf("/");
 	        }
 
 	         
-	        pathname = slashes_repetition_fixed;
+	        pathname = slashes_repetition_fixed.trim();
 	        if (lastSlashIndex != -1) {
-	            filename = pathname.substring(lastSlashIndex + 1);
+	            filename = pathname.substring(lastSlashIndex + 1).trim();
 	        } else {
-	            filename = pathname.substring(0);
+	            filename = pathname.equals("-") ? "-" : pathname.trim();
 	        }
 	    }
 	}

@@ -1,6 +1,6 @@
 import studiplayer.basic.BasicPlayer;
 
-public class SampledFile extends AudioFile{
+public abstract class SampledFile extends AudioFile{
 	
 	protected long duration;
 	
@@ -34,6 +34,9 @@ public class SampledFile extends AudioFile{
 	}
 	
 	static public String timeFormatter(long timeInMicroSeconds) {
+		if (timeInMicroSeconds <= -1L || timeInMicroSeconds >= 6000000000L) {
+			throw new RuntimeException();
+		}
 		long minutes = (timeInMicroSeconds / 1000000 / 60);
 	    long seconds = timeInMicroSeconds / 1000000 - minutes * 60;
 	    return String.format("%02d:%02d", minutes, seconds);

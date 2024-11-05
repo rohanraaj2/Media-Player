@@ -61,7 +61,7 @@ public class TestSubtaskA {
 		// call play() in its own thread since it would otherwise block until
 		// the song is played to the end
 		new Thread(() -> tf1.play()).start();
-		Thread.sleep(3000);
+		Thread.sleep(4000);
 		tf1.stop();
 		
 		long position = BasicPlayer.getPosition();

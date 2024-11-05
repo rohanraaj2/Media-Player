@@ -16,9 +16,14 @@ public class Utils {
 	}
 	
 	private static char emulateOS(String[] osSettings) {
-		System.setProperty("file.separator", osSettings[0]);
-		System.setProperty("os.name", osSettings[1]);		
-		return osSettings[0].charAt(0);
+		try {
+			System.setProperty("file.separator", osSettings[0]);
+			System.setProperty("os.name", osSettings[1]);
+			return osSettings[0].charAt(0);
+		} catch (Exception e) {
+			//  ignore, we most likely run on APA (Ubuntu), setProperty is not allowed
+			return osSettings[0].charAt(0);
+		}
 	}
 	
 	public static void resetEmulation() {

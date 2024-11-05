@@ -131,4 +131,16 @@ public class AudioFileTest {
 		assertEquals("Wrong author", "", f.getAuthor());
 		assertEquals("Wrong title", "kein.wav.sondern", f.getTitle());
 	}
+	
+	@Test
+	public void testReadTest() {
+		try {
+			Utils.emulateLinux();
+			// should not throw an exception, since path will be normalized by parsePathname() 
+			AudioFile af = new TaggedFile("audiofiles\\Rock 812.mp3");
+		} catch (Exception e) {
+			e.printStackTrace();
+			fail("Did you forget to call parsePathname() the path before the read test?");
+		}
+	}
 }

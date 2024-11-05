@@ -12,6 +12,7 @@ public class WavFile extends SampledFile{
 		parsePathname(path);
 		File file = new File(pathname);
 		
+		parseFilename(filename);
 		if (!file.canRead()) {
 			
 			throw new RuntimeException("Invalid path"); 
@@ -22,20 +23,14 @@ public class WavFile extends SampledFile{
 	
 
 	private void readAndSetDurationFromFile() {
-	    // Call the WavParamReader methods
 		WavParamReader.readParams(pathname);
 	    float framesPerSecond = WavParamReader.getFrameRate();
-	    // Read the number of frames
 	    long frames = WavParamReader.getNumberOfFrames();
 	
-	    // Calculate the duration
 	    duration = computeDuration(frames, framesPerSecond);
 	    
-//	    System.out.println(getDuration());
-	    // Set the duration attribute
 	    setDuration(duration);
 	    
-//	    System.out.println(getDuration());
 	}
 
 
@@ -45,14 +40,10 @@ public class WavFile extends SampledFile{
 	}
 	
 	public static long computeDuration(long numberOfFrames, float frameRate) {
-		System.out.println("Frames: " + numberOfFrames);
-		System.out.println("Frame rate: " + (long) frameRate);
-		System.out.println("Result: " + (((float)numberOfFrames / frameRate) * 1000000));
-		return   (long) (((float)numberOfFrames / frameRate) * 1000000);
+		return (long) (((float)numberOfFrames / frameRate) * 1000000);
 	}
 
 	public static void main(String[] args) {
-		// TODO Auto-generated method stub
 
 	}
 

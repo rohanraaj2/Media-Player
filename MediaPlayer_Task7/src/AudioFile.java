@@ -1,7 +1,7 @@
 import java.io.File;
 import java.nio.file.InvalidPathException;
 
-public class AudioFile {
+public abstract class AudioFile {
 	
 	protected String pathname;
 	protected String filename;
@@ -79,10 +79,10 @@ public class AudioFile {
 	        author = filename.substring(0, hyphenIndex).trim();
 	        
 	        if (extensionIndex != -1) {
-	            title = filename.substring(hyphenIndex + 3, extensionIndex).trim();
+	            title = filename.substring(hyphenIndex + 2, extensionIndex).trim();
 	        } else {
 	             
-	            title = filename.substring(hyphenIndex + 3).trim();
+	            title = filename.substring(hyphenIndex + 2).trim();
 	        }
 	    } else {
 	         
@@ -106,50 +106,38 @@ public class AudioFile {
 	}
 
 	public String getAuthor() {
-		return author;
+		return author.trim();
 	}
 
 	public String getTitle() {
-		return title;
+		return title.trim();
 	}
 	
 	public String toString() {
-		if (getAuthor() == "") {
-			return title;
+		if(title != null && author != null) {
+			return String.format("%s - %s", author.trim(), title.trim());
 		}
+		else if(title != null && author == null) {
+				return title;
+			}
+		else if(title == null && author != null) {
+				return author;
+			}
 		else {
-//			if(title != null) {
-//				return String.format(author + " - " + title);
-//			}
-//			if ((author != null) && (title != null)){
-				return (String.format("%s - %s",author, title)).trim();
-//			}
-//			else {
-				
-//			}
-//			return "";
+			title = filename.substring(0, filename.lastIndexOf('.'));
+			return title;	
 		}
 	}
 	
-	public void play() {
-		
-	}
+	public abstract void play();
 	
-	public void togglePause() {
-		
-	}
+	public abstract void togglePause();
 	
-	public void stop() {
-		
-	}
+	public abstract void stop();
 	
-	public String formatDuration() {
-		return null;
-	}
+	public abstract String formatDuration();
 	
-	public String formatPosition() {
-		return null;
-	}
+	public abstract String formatPosition();
 
 	public static void main(String[] args) {
 		

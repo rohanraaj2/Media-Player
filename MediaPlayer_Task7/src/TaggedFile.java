@@ -30,25 +30,45 @@ public class TaggedFile extends SampledFile{
         } else {
             this.duration = 0;  // Default value or error handling
         }
+        if (this.title == "") {
+    		parseFilename(filename);
+        }
     }
 	
 	@Override
 	public String toString() {
-	    String baseString = super.toString();// Get the author and title
-	    if (album != null && !album.isEmpty()) {
-	        String fullString = String.format("%s - %s - %s", baseString, album.trim(), formatDuration().trim());
-	        return fullString.trim();
-	    } else {
-	        return super.toString();
+	    StringBuilder result = new StringBuilder();
+	    
+	    if (author != null && !author.isEmpty()) {
+	        result.append(author.trim());
 	    }
+	    if (title != null && !title.isEmpty()) {
+	        if (result.length() > 0) {
+	            result.append(" - ");
+	        }
+	        result.append(title.trim());
+	    }
+
+	    if (album != null && !album.isEmpty()) {
+	        if (result.length() > 0) {
+	            result.append(" - ");
+	        }
+	        result.append(album.trim());
+	    }
+
+	    if (duration > 0) {
+	        if (result.length() > 0) {
+	            result.append(" - ");
+	        }
+	        result.append(formatDuration());
+	    }
+
+	    return result.toString().trim();
 	}
 
 
 
-
-
 	public static void main(String[] args) {
-		// TODO Auto-generated method stub
 
 	}
 }
