@@ -75,12 +75,12 @@ public class AudioFile {
 	    else {
 	        if (isWindows()) {
 	            slashes_changed = temp.replace("/", "\\").trim();
-	            slashes_repetition_fixed = slashes_changed.replaceAll("\\\\\\\\+", "\\\\");
+	            slashes_repetition_fixed = removeExtraBackslashes(slashes_changed);
 	            lastSlashIndex = slashes_repetition_fixed.lastIndexOf("\\");
 	        } 
 	        else {
 	            slashes_changed = temp.replace("\\", "/").trim();
-	            slashes_repetition_fixed = slashes_changed.replaceAll("/+", "/");
+	            slashes_repetition_fixed = removeExtraForwardSlashes(slashes_changed);
 	            if (slashes_repetition_fixed.length() >= 2 && Character.isLetter(slashes_repetition_fixed.charAt(0))
 	                    && slashes_repetition_fixed.charAt(1) == ':') {
 	            	slashes_repetition_fixed = "/" + slashes_repetition_fixed.charAt(0) + slashes_repetition_fixed.substring(2);
@@ -99,6 +99,40 @@ public class AudioFile {
 	}
 
 
+	
+	private String removeExtraBackslashes(String path) {
+	    StringBuilder result = new StringBuilder();
+	    boolean lastWasBackslash = false;
+	    for (char c : path.toCharArray()) {
+	        if (c == '\\') {
+	            if (!lastWasBackslash) {
+	                result.append(c);
+	            }
+	            lastWasBackslash = true;
+	        } else {
+	            result.append(c);
+	            lastWasBackslash = false;
+	        }
+	    }
+	    return result.toString();
+	}
+	
+	private String removeExtraForwardSlashes(String path) {
+	    StringBuilder result = new StringBuilder();
+	    boolean lastWasSlash = false;
+	    for (char c : path.toCharArray()) {
+	        if (c == '/') {
+	            if (!lastWasSlash) {
+	                result.append(c);
+	            }
+	            lastWasSlash = true;
+	        } else {
+	            result.append(c);
+	            lastWasSlash = false;
+	        }
+	    }
+	    return result.toString();
+	}
 	
 	public String getPathname() {
 		return pathname;
