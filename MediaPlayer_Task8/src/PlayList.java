@@ -3,9 +3,8 @@ import java.util.List;
 
 public class PlayList {
 	
-	
-	
 	private LinkedList<AudioFile> listOfAudioFiles;
+	private int current = 0;
 
 	public PlayList() {
 		listOfAudioFiles = new LinkedList<>();
@@ -32,7 +31,12 @@ public class PlayList {
 	}
 	
 	public void nextSong() {
-		
+		if (current > this.size() - 2) { // 1 extra decrement because the index in the list starts at 0
+			current = 0;
+		}
+		else {
+			current += 1;
+		}
 	}
 	
 	public void loadFromM3U(String pathname) {
@@ -48,11 +52,11 @@ public class PlayList {
 	}
 	
 	public int getCurrent() {
-		return 0;	
+		return current;
 	}
 	
 	public void setCurrent(int current) {
-		
+		this.current = current;
 	}
 	
 	public static void main(String[] args) {}
