@@ -33,7 +33,10 @@ public class PlayList {
 	}
 	
 	public AudioFile currentAudioFile() {
-		return null;
+		if (current > listOfAudioFiles.size() - 1) {
+			return null;
+		}
+		return this.listOfAudioFiles.get(current);
 	}
 	
 	public void nextSong() {
@@ -48,6 +51,7 @@ public class PlayList {
 	public void loadFromM3U(String pathname) {
 		List<String> lines = new ArrayList<>();
 		Scanner scanner = null;
+		current = 0;
 		listOfAudioFiles.clear();
 		
 		try {
@@ -56,8 +60,13 @@ public class PlayList {
 			
 			while (scanner.hasNextLine()) {
 				String line = scanner.nextLine();
-				AudioFile audioFile = AudioFileFactory.createAudioFile(line);
-				add(audioFile);
+				if (line.isBlank() || line.charAt(0) == '#') {
+					continue;
+				}
+				else {
+					AudioFile audioFile = AudioFileFactory.createAudioFile(line);
+					add(audioFile);	
+				}
 				String lineWithNumber = String.format("%03d: %s", lineNo++, line);
 				lines.add(lineWithNumber);
 			}
