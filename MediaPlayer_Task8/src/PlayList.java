@@ -17,6 +17,7 @@ public class PlayList {
 
 	public PlayList(String m3uPathname) {
 		listOfAudioFiles = new LinkedList<>();
+		loadFromM3U(m3uPathname);
 	}
 	
 	public void add(AudioFile file) {
@@ -45,9 +46,9 @@ public class PlayList {
 	}
 	
 	public void loadFromM3U(String pathname) {
-		AudioFile audioFile = AudioFileFactory.createAudioFile(pathname);
 		List<String> lines = new ArrayList<>();
 		Scanner scanner = null;
+		listOfAudioFiles.clear();
 		
 		try {
 			scanner = new Scanner(new File(pathname));
@@ -55,6 +56,8 @@ public class PlayList {
 			
 			while (scanner.hasNextLine()) {
 				String line = scanner.nextLine();
+				AudioFile audioFile = AudioFileFactory.createAudioFile(line);
+				add(audioFile);
 				String lineWithNumber = String.format("%03d: %s", lineNo++, line);
 				lines.add(lineWithNumber);
 			}
