@@ -14,7 +14,11 @@ public class ControllablePlayListIterator implements Iterator{
 	public ControllablePlayListIterator(List<AudioFile> list, String search, SortCriterion sort) {}
 	
 	public AudioFile jumpToAudioFile(AudioFile file) {
-		return file;
+		if (listOfSongs.contains(file)) {
+			index = listOfSongs.indexOf(file);
+			return file;
+		}
+		return null;
 	}
 
 	@Override
