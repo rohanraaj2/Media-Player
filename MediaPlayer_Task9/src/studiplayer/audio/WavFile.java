@@ -6,11 +6,9 @@ import studiplayer.basic.WavParamReader;
 
 public class WavFile extends SampledFile{
 	
-	public WavFile () {
-		
-	}
+	public WavFile () {}
 
-	public WavFile (String path) {
+	public WavFile (String path) throws NotPlayableException {
 		parsePathname(path);
 		File file = new File(pathname);
 		
@@ -23,8 +21,7 @@ public class WavFile extends SampledFile{
 		readAndSetDurationFromFile();
 	}
 	
-
-	private void readAndSetDurationFromFile() {
+	public void readAndSetDurationFromFile() throws NotPlayableException {
 		WavParamReader.readParams(pathname);
 	    float framesPerSecond = WavParamReader.getFrameRate();
 	    long frames = WavParamReader.getNumberOfFrames();
@@ -35,7 +32,6 @@ public class WavFile extends SampledFile{
 	    
 	}
 
-
 	@Override
 	public String toString() {
 	    return super.toString() + " - " + formatDuration();
@@ -45,8 +41,6 @@ public class WavFile extends SampledFile{
 		return (long) (((float)numberOfFrames / frameRate) * 1000000);
 	}
 
-	public static void main(String[] args) {
-
-	}
+	public static void main(String[] args) {}
 
 }

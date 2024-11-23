@@ -157,7 +157,7 @@ public abstract class AudioFile {
 		}
 	}
 	
-	public abstract void play();
+	public abstract void play() throws NotPlayableException;
 	
 	public abstract void togglePause();
 	
@@ -167,7 +167,5 @@ public abstract class AudioFile {
 	
 	public abstract String formatPosition();
 
-	public static void main(String[] args) {
-		
-		}
+	public static void main(String[] args) {}
 }

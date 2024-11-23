@@ -6,15 +6,11 @@ public abstract class SampledFile extends AudioFile{
 	
 	protected long duration;
 	
-	public SampledFile() {
-		
-	}
+	public SampledFile() {}
 	
-	public SampledFile(String path) {
-		
-	}
+	public SampledFile(String path) {}
 	
-	public void play() {
+	public void play() throws NotPlayableException {
 		BasicPlayer.play(pathname);
 	}
 
@@ -28,7 +24,6 @@ public abstract class SampledFile extends AudioFile{
 
 	public String formatDuration() {
 		return timeFormatter(duration);
-
 	}
 	
 	public String formatPosition() {

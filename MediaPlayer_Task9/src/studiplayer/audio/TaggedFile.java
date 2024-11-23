@@ -7,9 +7,8 @@ import studiplayer.basic.TagReader;
 public class TaggedFile extends SampledFile{
     
 	private String album;
-	public TaggedFile () {
-		
-	}
+	
+	public TaggedFile () {}
 	
 	public TaggedFile (String path) {
 		parsePathname(path);
@@ -20,7 +19,7 @@ public class TaggedFile extends SampledFile{
 		return album.trim();
 	}
 	
-	public void readAndStoreTags() {
+	public void readAndStoreTags() throws NotPlayableException {
         Map<String, Object> tagMap = TagReader.readTags(this.pathname);
         this.title = (String) tagMap.getOrDefault("title", "");
         this.author = (String) tagMap.getOrDefault("author", "");
@@ -68,9 +67,5 @@ public class TaggedFile extends SampledFile{
 	    return result.toString().trim();
 	}
 
-
-
-	public static void main(String[] args) {
-
-	}
+	public static void main(String[] args) {}
 }

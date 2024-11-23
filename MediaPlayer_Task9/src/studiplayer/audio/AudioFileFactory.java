@@ -2,7 +2,7 @@ package studiplayer.audio;
 
 public class AudioFileFactory {
 
-	public static AudioFile createAudioFile(String path) {
+	public static AudioFile createAudioFile(String path) throws NotPlayableException {
 		String extension = path.substring(path.lastIndexOf(".") + 1);
 		switch (extension.toLowerCase()) {
 		    case "wav":
@@ -15,8 +15,6 @@ public class AudioFileFactory {
 		}
 	}
 	
-	public static void main(String[] args) {
-
-	}
+	public static void main(String[] args) {}
 
 }
