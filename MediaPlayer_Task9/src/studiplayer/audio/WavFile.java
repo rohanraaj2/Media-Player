@@ -1,3 +1,5 @@
+package studiplayer.audio;
+
 import java.io.File;
 
 import studiplayer.basic.WavParamReader;
