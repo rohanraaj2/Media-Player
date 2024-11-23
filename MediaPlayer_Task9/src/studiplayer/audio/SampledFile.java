@@ -8,10 +8,14 @@ public abstract class SampledFile extends AudioFile{
 	
 	public SampledFile() {}
 	
-	public SampledFile(String path) {}
+	public SampledFile(String path) throws NotPlayableException {}
 	
 	public void play() throws NotPlayableException {
-		BasicPlayer.play(pathname);
+		try {
+			BasicPlayer.play(pathname);
+		} catch (Exception e) {
+			throw new NotPlayableException(pathname, "Error playing the file");
+		}
 	}
 
 	public void togglePause() {

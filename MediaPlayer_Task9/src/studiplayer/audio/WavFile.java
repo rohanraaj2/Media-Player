@@ -14,22 +14,22 @@ public class WavFile extends SampledFile{
 		
 		parseFilename(filename);
 		if (!file.canRead()) {
-			
-			throw new RuntimeException("Invalid path"); 
+			throw new NotPlayableException("Invalid path: ", path);
 		}
-		
 		readAndSetDurationFromFile();
 	}
 	
 	public void readAndSetDurationFromFile() throws NotPlayableException {
-		WavParamReader.readParams(pathname);
-	    float framesPerSecond = WavParamReader.getFrameRate();
-	    long frames = WavParamReader.getNumberOfFrames();
+	    try {
+	        WavParamReader.readParams(pathname);
+	        float framesPerSecond = WavParamReader.getFrameRate();
+	        long frames = WavParamReader.getNumberOfFrames();
 	
-	    duration = computeDuration(frames, framesPerSecond);
-	    
-	    setDuration(duration);
-	    
+	        duration = computeDuration(frames, framesPerSecond);
+	        setDuration(duration);
+	    } catch (Exception e) {
+	    	throw new NotPlayableException(pathname, "Error reading the file");
+	    }
 	}
 
 	@Override

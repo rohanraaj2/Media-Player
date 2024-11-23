@@ -73,7 +73,7 @@ public class PlayList {
 				lines.add(lineWithNumber);
 			}
 		} catch (Exception e) {
-			throw new RuntimeException(e);
+			e.printStackTrace();
 		} finally {
 			try {
 				System.out.println("File " + pathname + " read!");

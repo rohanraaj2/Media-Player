@@ -10,7 +10,7 @@ public class TaggedFile extends SampledFile{
 	
 	public TaggedFile () {}
 	
-	public TaggedFile (String path) {
+	public TaggedFile (String path) throws NotPlayableException {
 		parsePathname(path);
 		readAndStoreTags();
 	}
@@ -20,20 +20,24 @@ public class TaggedFile extends SampledFile{
 	}
 	
 	public void readAndStoreTags() throws NotPlayableException {
-        Map<String, Object> tagMap = TagReader.readTags(this.pathname);
-        this.title = (String) tagMap.getOrDefault("title", "");
-        this.author = (String) tagMap.getOrDefault("author", "");
-        this.album = (String) tagMap.getOrDefault("album", "");
-        Object durationValue = tagMap.get("duration");
-
-        if (durationValue instanceof Number) {
-            this.duration = ((Number) durationValue).longValue();
-        } else {
-            this.duration = 0;  // Default value or error handling
-        }
-        if (this.title == "") {
-    		parseFilename(filename);
-        }
+		try {
+			Map<String, Object> tagMap = TagReader.readTags(this.pathname);
+	        this.title = (String) tagMap.getOrDefault("title", "");
+	        this.author = (String) tagMap.getOrDefault("author", "");
+	        this.album = (String) tagMap.getOrDefault("album", "");
+	        Object durationValue = tagMap.get("duration");
+	
+	        if (durationValue instanceof Number) {
+	            this.duration = ((Number) durationValue).longValue();
+	        } else {
+	            this.duration = 0;  // Default value or error handling
+	        }
+	        if (this.title == "") {
+	    		parseFilename(filename);
+	        }
+		} catch(Exception e) {
+			throw new NotPlayableException(pathname, "Error reading the file");
+		}
     }
 	
 	@Override

@@ -2,12 +2,23 @@ package studiplayer.audio;
 
 public class NotPlayableException extends Exception {
 	
-	public NotPlayableException() {
-		
-	}
+	private String pathname;
 
-	public static void main(String[] args) {
-
+	public NotPlayableException(String pathname, String msg) {
+	    super(msg);
+	    this.pathname = pathname;
 	}
+	
+	public NotPlayableException(String pathname, Throwable t) {
+	    super(t);
+	    this.pathname = pathname;
+	}
+	
+	public NotPlayableException(String pathname, String msg, Throwable t) {
+	    super(msg, t);
+	    this.pathname = pathname;
+	}
+	
+	public static void main(String[] args) {}
 
 }

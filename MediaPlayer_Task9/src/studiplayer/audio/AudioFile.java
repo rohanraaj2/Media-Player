@@ -11,7 +11,7 @@ public abstract class AudioFile {
 	
 	public AudioFile() {}
 	
-	public AudioFile (String path) {
+	public AudioFile (String path) throws NotPlayableException {
 
 		parsePathname(path);
 		
