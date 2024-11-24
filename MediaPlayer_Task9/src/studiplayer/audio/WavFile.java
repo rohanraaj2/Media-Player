@@ -4,7 +4,7 @@ import java.io.File;
 
 import studiplayer.basic.WavParamReader;
 
-public class WavFile extends SampledFile{
+public class WavFile extends SampledFile {
 	
 	public WavFile () {}
 
@@ -40,7 +40,4 @@ public class WavFile extends SampledFile{
 	public static long computeDuration(long numberOfFrames, float frameRate) {
 		return (long) (((float)numberOfFrames / frameRate) * 1000000);
 	}
-
-	public static void main(String[] args) {}
-
 }

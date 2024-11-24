@@ -5,9 +5,8 @@ import studiplayer.basic.TagReader;
 public class TaggedFile extends SampledFile{
     
 	private String album;
-	public TaggedFile () {
-		
-	}
+	
+	public TaggedFile () {}
 	
 	public TaggedFile (String path) {
 		parsePathname(path);
@@ -42,6 +41,7 @@ public class TaggedFile extends SampledFile{
 	    if (author != null && !author.isEmpty()) {
 	        result.append(author.trim());
 	    }
+	    
 	    if (title != null && !title.isEmpty()) {
 	        if (result.length() > 0) {
 	            result.append(" - ");
@@ -62,13 +62,6 @@ public class TaggedFile extends SampledFile{
 	        }
 	        result.append(formatDuration());
 	    }
-
 	    return result.toString().trim();
-	}
-
-
-
-	public static void main(String[] args) {
-
 	}
 }

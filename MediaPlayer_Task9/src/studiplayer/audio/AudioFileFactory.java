@@ -14,7 +14,4 @@ public class AudioFileFactory {
 		        throw new IllegalArgumentException("Unknown suffix for AudioFile \"" + path + "\"");
 		}
 	}
-	
-	public static void main(String[] args) {}
-
 }

@@ -129,8 +129,7 @@ public class AudioFile {
 	public String toString() {
 		if (getAuthor() == "") {
 			return title;
-		}
-		else {
+		} else {
 			return author + " - " + title;
 		}
 	}

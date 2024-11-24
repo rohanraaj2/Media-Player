@@ -11,13 +11,6 @@ public abstract class AudioFile {
 	
 	public AudioFile (String path) {
 		parsePathname(path);
-		
-		File file = new File(pathname);
-		
-		if (!file.canRead()) {
-			
-			throw new RuntimeException("Invalid path"); 
-		}
 		parseFilename(filename);
 	}
 
@@ -33,12 +26,9 @@ public abstract class AudioFile {
 	    int lastSlashIndex;
 
 	    if ((temp.indexOf('/') == -1) && (temp.indexOf('\\') == -1)) {
-	         
 	        pathname = temp.replace("‿", "");
 	        filename = pathname.substring(0);
-	    } 
-	    else {
-	        slashes_repetition_fixed = temp.replaceAll("/+", "/");
+	    } else {
 	        if (isWindows()) {
 	            slashes_changed = temp.replace("/", "\\");
 	            slashes_repetition_fixed = removeExtraBackslashes(slashes_changed);
@@ -136,18 +126,10 @@ public abstract class AudioFile {
 	}
 	
 	public String toString() {
-		if(title != null && author != null) {
-			return String.format("%s - %s", author.trim(), title.trim());
-		}
-		else if(title != null && author == null) {
-				return title;
-			}
-		else if(title == null && author != null) {
-				return author;
-			}
-		else {
-			title = filename.substring(0, filename.lastIndexOf('.'));
-			return title;	
+		if (getAuthor() == "") {
+			return title;
+		} else {
+			return author + " - " + title;
 		}
 	}
 	

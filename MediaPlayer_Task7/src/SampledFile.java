@@ -1,16 +1,12 @@
 import studiplayer.basic.BasicPlayer;
 
-public abstract class SampledFile extends AudioFile{
+public abstract class SampledFile extends AudioFile {
 	
 	protected long duration;
 	
-	public SampledFile() {
-		
-	}
+	public SampledFile() {}
 	
-	public SampledFile(String path) {
-		
-	}
+	public SampledFile(String path) {}
 	
 	public void play() {
 		BasicPlayer.play(pathname);
@@ -26,7 +22,6 @@ public abstract class SampledFile extends AudioFile{
 
 	public String formatDuration() {
 		return timeFormatter(duration);
-
 	}
 	
 	public String formatPosition() {

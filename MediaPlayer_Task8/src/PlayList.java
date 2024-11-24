@@ -42,8 +42,7 @@ public class PlayList {
 	public void nextSong() {
 		if (current > this.size() - 2) { // 1 extra decrement because the index in the list starts at 0
 			current = 0;
-		}
-		else {
+		} else {
 			current += 1;
 		}
 	}
@@ -62,8 +61,7 @@ public class PlayList {
 				String line = scanner.nextLine();
 				if (line.isBlank() || line.charAt(0) == '#') {
 					continue;
-				}
-				else {
+				} else {
 					AudioFile audioFile = AudioFileFactory.createAudioFile(line);
 					add(audioFile);	
 				}
@@ -93,7 +91,6 @@ public class PlayList {
 			for (AudioFile file : listOfAudioFiles) {
 				lines.add(file.getPathname());
 			}
-			
 			for (String line : lines) {
 				writer.write(line + sep);
 			}
@@ -109,7 +106,7 @@ public class PlayList {
 		}
 	}
 	
-	public List<AudioFile> getList(){
+	public List<AudioFile> getList() {
 		return listOfAudioFiles;
 	}
 	
@@ -120,7 +117,4 @@ public class PlayList {
 	public void setCurrent(int current) {
 		this.current = current;
 	}
-	
-	public static void main(String[] args) {}
-
 }
