@@ -90,7 +90,7 @@ public class AudioFile {
 	    if (filename.isEmpty()) {
 	        author = "";
 	        title = "";
-	        return; 
+	        return;
 	    }
 	    
 	    if (hyphenIndex != -1) {
