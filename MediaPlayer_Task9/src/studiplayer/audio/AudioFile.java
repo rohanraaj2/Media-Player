@@ -118,11 +118,11 @@ public abstract class AudioFile {
 	}
 
 	public String getAuthor() {
-		return author.trim();
+		return author;
 	}
 
 	public String getTitle() {
-		return title.trim();
+		return title;
 	}
 	
 	public String toString() {
