@@ -1,7 +1,9 @@
 package studiplayer.audio;
 
-public class SortCriterion {
-
-	public static void main(String[] args) {}
-	
+public enum SortCriterion {
+	DEFAULT,
+	AUTHOR,
+	TITLE,
+	ALBUM,
+	DURATION
 }
