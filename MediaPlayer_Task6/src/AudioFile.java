@@ -19,7 +19,7 @@ public class AudioFile {
 	}
 	
 	public void parsePathname(String path) {
-	    String temp = path.trim(); 
+	    String temp = path.trim();
 	    String slashes_changed;
 	    String slashes_repetition_fixed;
 	    int lastSlashIndex;
@@ -29,24 +29,20 @@ public class AudioFile {
 	        filename = pathname.equals("-") ? "-" : pathname;
 	    } else {
 	        if (isWindows()) {
-	            slashes_changed = temp.replace("/", "\\").trim();
+	            slashes_changed = temp.replace("/", "\\");
 	            slashes_repetition_fixed = removeExtraBackslashes(slashes_changed);
 	            lastSlashIndex = slashes_repetition_fixed.lastIndexOf("\\");
 	        } else {
-	            slashes_changed = temp.replace("\\", "/").trim();
+	            slashes_changed = temp.replace("\\", "/");
 	            slashes_repetition_fixed = removeExtraForwardSlashes(slashes_changed);
-	            if (slashes_repetition_fixed.length() >= 2 && Character.isLetter(slashes_repetition_fixed.charAt(0))
-	                    && slashes_repetition_fixed.charAt(1) == ':') {
-	            	slashes_repetition_fixed = "/" + slashes_repetition_fixed.charAt(0) + slashes_repetition_fixed.substring(2);
-	            }
 	            lastSlashIndex = slashes_repetition_fixed.lastIndexOf("/");
 	        }
 	        
-	        pathname = slashes_repetition_fixed.trim();
+	        pathname = slashes_repetition_fixed;
 	        if (lastSlashIndex != -1) {
 	            filename = pathname.substring(lastSlashIndex + 1).trim();
 	        } else {
-	            filename = pathname.equals("-") ? "-" : pathname.trim();
+	            filename = pathname.substring(0).trim();
 	        }
 	    }
 	}
@@ -100,9 +96,9 @@ public class AudioFile {
 	    if (hyphenIndex != -1) {
 	        author = filename.substring(0, hyphenIndex).trim();
 	        if (extensionIndex != -1) {
-	            title = filename.substring(hyphenIndex + 3, extensionIndex).trim();
+	            title = filename.substring(hyphenIndex + 2, extensionIndex).trim();
 	        } else {
-	            title = filename.substring(hyphenIndex + 3).trim();
+	            title = filename.substring(hyphenIndex + 2).trim();
 	        }
 	    } else {
 	        author = "";

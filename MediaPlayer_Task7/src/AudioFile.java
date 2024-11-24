@@ -10,7 +10,6 @@ public abstract class AudioFile {
 	public AudioFile() {}
 	
 	public AudioFile (String path) {
-
 		parsePathname(path);
 		
 		File file = new File(pathname);
@@ -21,7 +20,7 @@ public abstract class AudioFile {
 		}
 		parseFilename(filename);
 	}
-	
+
 	private boolean isWindows() {
 		 return System.getProperty("os.name").toLowerCase()
 		 .indexOf("win") >= 0;
@@ -49,42 +48,12 @@ public abstract class AudioFile {
 	            slashes_repetition_fixed = removeExtraForwardSlashes(slashes_changed);
 	            lastSlashIndex = slashes_repetition_fixed.lastIndexOf("/");
 	        }
-
+	        
 	        pathname = slashes_repetition_fixed;
 	        if (lastSlashIndex != -1) {
-	            filename = pathname.substring(lastSlashIndex + 1);
+	            filename = pathname.substring(lastSlashIndex + 1).trim();
 	        } else {
-	            filename = pathname.substring(0);
-	        }
-	    }
-	}
-	
-	public void parseFilename(String filename) {
-	    int hyphenIndex = filename.indexOf(" - ");
-	    int extensionIndex = filename.lastIndexOf('.');
-
-	    if (filename.isEmpty()) {
-	        author = "";
-	        title = "";
-	        return; 
-	    }
-	    if (hyphenIndex != -1) {
-	      
-	        author = filename.substring(0, hyphenIndex).trim();
-	        
-	        if (extensionIndex != -1) {
-	            title = filename.substring(hyphenIndex + 2, extensionIndex).trim();
-	        } else {
-	             
-	            title = filename.substring(hyphenIndex + 2).trim();
-	        }
-	    } 
-	    else {     
-	        author = "";
-	        if (extensionIndex != -1) {
-	            title = filename.substring(0, extensionIndex).trim();
-	        } else {
-	            title = filename.trim();
+	            filename = pathname.substring(0).trim();
 	        }
 	    }
 	}
@@ -92,6 +61,7 @@ public abstract class AudioFile {
 	private String removeExtraBackslashes(String path) {
 	    StringBuilder result = new StringBuilder();
 	    boolean lastWasBackslash = false;
+	    
 	    for (char c : path.toCharArray()) {
 	        if (c == '\\') {
 	            if (!lastWasBackslash) {
@@ -109,6 +79,7 @@ public abstract class AudioFile {
 	private String removeExtraForwardSlashes(String path) {
 	    StringBuilder result = new StringBuilder();
 	    boolean lastWasSlash = false;
+	    
 	    for (char c : path.toCharArray()) {
 	        if (c == '/') {
 	            if (!lastWasSlash) {
@@ -121,6 +92,31 @@ public abstract class AudioFile {
 	        }
 	    }
 	    return result.toString();
+	}
+	
+	public void parseFilename(String filename) {
+	    int hyphenIndex = filename.indexOf(" - ");
+	    int extensionIndex = filename.lastIndexOf('.');
+
+	    if (filename.isEmpty()) {
+	        author = "";
+	        title = "";
+	        return; 
+	    }
+	    
+	    if (hyphenIndex != -1) {
+	        author = filename.substring(0, hyphenIndex).trim();
+	        if (extensionIndex != -1) {
+	            title = filename.substring(hyphenIndex + 2, extensionIndex).trim();
+	        } else {
+	            title = filename.substring(hyphenIndex + 2).trim();
+	        }
+	    } else {
+	        author = "";
+	        if (extensionIndex != -1) {
+	            title = filename.substring(0, extensionIndex).trim();
+	        }
+	    }
 	}
 	
 	public String getPathname() {
@@ -164,8 +160,4 @@ public abstract class AudioFile {
 	public abstract String formatDuration();
 	
 	public abstract String formatPosition();
-
-	public static void main(String[] args) {
-		
-		}
 }
