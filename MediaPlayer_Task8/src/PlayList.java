@@ -6,17 +6,16 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Scanner;
 
+import studiplayer.audio.AudioFile;
+
 public class PlayList {
 	
-	private LinkedList<AudioFile> listOfAudioFiles;
+	List<AudioFile> listOfAudioFiles = new LinkedList<>();
 	private int current = 0;
 
-	public PlayList() {
-		listOfAudioFiles = new LinkedList<>();
-	}
+	public PlayList() {}
 
 	public PlayList(String m3uPathname) {
-		listOfAudioFiles = new LinkedList<>();
 		loadFromM3U(m3uPathname);
 	}
 	

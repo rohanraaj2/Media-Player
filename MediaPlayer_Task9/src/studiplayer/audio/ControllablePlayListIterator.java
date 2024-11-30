@@ -2,7 +2,7 @@ package studiplayer.audio;
 
 import java.util.List;
 
-public class ControllablePlayListIterator implements Iterator{
+public class ControllablePlayListIterator implements Iterator {
 
 	private List<AudioFile> listOfSongs;
 	private int index = -1;
@@ -34,6 +34,4 @@ public class ControllablePlayListIterator implements Iterator{
 		}
 		return false;
 	}
-	
-	public static void main(String[] args) {}
 }

@@ -10,19 +10,17 @@ import java.util.Scanner;
 
 public class PlayList {
 	
-	private LinkedList<AudioFile> listOfAudioFiles;
+	List<AudioFile> listOfAudioFiles = new LinkedList<>();
 	private int current = 0;
 	private String search;
 	private SortCriterion sortCriterion;
 
 	public PlayList() {
 		sortCriterion = SortCriterion.DEFAULT;
-		listOfAudioFiles = new LinkedList<>();
 	}
 
 	public PlayList(String m3uPathname) {
 		sortCriterion = SortCriterion.DEFAULT;
-		listOfAudioFiles = new LinkedList<>();
 		loadFromM3U(m3uPathname);
 	}
 	
