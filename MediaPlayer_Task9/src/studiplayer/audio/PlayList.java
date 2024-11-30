@@ -13,14 +13,12 @@ public class PlayList {
 	List<AudioFile> listOfAudioFiles = new LinkedList<>();
 	private int current = 0;
 	private String search;
-	private SortCriterion sortCriterion;
+	private SortCriterion sortCriterion = SortCriterion.DEFAULT;
+	ControllablePlayListIterator iterator;
 
-	public PlayList() {
-		sortCriterion = SortCriterion.DEFAULT;
-	}
+	public PlayList() {}
 
 	public PlayList(String m3uPathname) {
-		sortCriterion = SortCriterion.DEFAULT;
 		loadFromM3U(m3uPathname);
 	}
 	
