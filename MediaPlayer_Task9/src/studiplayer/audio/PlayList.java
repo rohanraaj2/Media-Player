@@ -24,22 +24,6 @@ public class PlayList {
 		loadFromM3U(m3uPathname);
 	}
 	
-	public String getSearch() {
-		return search;
-	}
-
-	public void setSearch(String search) {
-		this.search = search;
-	}
-
-	public SortCriterion getSortCriterion() {
-		return sortCriterion;
-	}
-
-	public void setSortCriterion(SortCriterion sortCriterion) {
-		this.sortCriterion = sortCriterion;
-	}
-	
 	public void add(AudioFile file) {
 		listOfAudioFiles.add(file);
 	}
@@ -136,5 +120,25 @@ public class PlayList {
 	
 	public void setCurrent(int current) {
 		this.current = current;
+	}
+	
+	public SortCriterion getSortCriterion() {
+		return sortCriterion;
+	}
+
+	public void setSortCriterion(SortCriterion sortCriterion) {
+		this.sortCriterion = sortCriterion;
+	}
+	
+	public String getSearch() {
+		return search;
+	}
+
+	public void setSearch(String search) {
+		this.search = search;
+	}
+	
+	public Iterator<AudioFile> iterator() {
+		return new ControllablePlayListIterator(getList(), getSearch(), getSortCriterion());	
 	}
 }

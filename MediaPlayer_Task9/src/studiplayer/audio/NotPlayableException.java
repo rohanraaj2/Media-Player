@@ -18,7 +18,4 @@ public class NotPlayableException extends Exception {
 	    super(msg, t);
 	    this.pathname = pathname;
 	}
-	
-	public static void main(String[] args) {}
-
 }
