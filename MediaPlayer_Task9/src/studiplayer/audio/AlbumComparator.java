@@ -13,6 +13,14 @@ public class AlbumComparator implements Comparator<AudioFile> {
 	        return -1;
 	    } else if (!album1.isEmpty() && album2.isEmpty()) {
 	        return 1;
+	    } else {
+	        char firstCharO1 = album1.charAt(0);
+	        char firstCharO2 = album2.charAt(0);
+	        if (firstCharO1 < firstCharO2) {
+	            return -1;
+	        } else if (firstCharO1 > firstCharO2) {
+	            return 1;
+	        }
 	    }
 	    return 0;
 	}

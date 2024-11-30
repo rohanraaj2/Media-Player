@@ -13,6 +13,15 @@ public class AuthorComparator implements Comparator<AudioFile> {
 	        return -1;
 	    } else if (!author1.isEmpty() && author2.isEmpty()) {
 	        return 1;
+        } else {
+	        char firstCharO1 = author1.charAt(0);
+	        char firstCharO2 = author2.charAt(0);
+
+	        if (firstCharO1 < firstCharO2) {
+	            return -1;
+	        } else if (firstCharO1 > firstCharO2) {
+	            return 1;
+	        }
         }
         return 0;
     }

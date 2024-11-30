@@ -118,10 +118,16 @@ public abstract class AudioFile {
 	}
 
 	public String getAuthor() {
+		if (author != null) {
+			return author.trim();
+		}
 		return author;
 	}
 
 	public String getTitle() {
+		if (title != null) {
+			return title.trim();
+		}
 		return title;
 	}
 	

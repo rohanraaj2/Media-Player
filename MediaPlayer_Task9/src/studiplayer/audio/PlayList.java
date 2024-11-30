@@ -7,10 +7,12 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Scanner;
+import java.util.Iterator;
+import java.lang.Iterable;
 
-public class PlayList {
+public class PlayList implements Iterable<AudioFile> {
 	
-	List<AudioFile> listOfAudioFiles = new LinkedList<>();
+	private List<AudioFile> listOfAudioFiles = new LinkedList<>();
 	private int current = 0;
 	private String search;
 	private SortCriterion sortCriterion = SortCriterion.DEFAULT;
@@ -137,6 +139,6 @@ public class PlayList {
 	}
 	
 	public Iterator<AudioFile> iterator() {
-		return new ControllablePlayListIterator(getList(), getSearch(), getSortCriterion());	
+		return new ControllablePlayListIterator(listOfAudioFiles, search, sortCriterion);
 	}
 }
