@@ -51,11 +51,11 @@ public class ControllablePlayListIterator implements Iterator<AudioFile> {
 	}
 	
 	private boolean checkForMatch(AudioFile file, String keyword) {
-		if (file.getTitle().equals(keyword) || file.getAuthor().equals(keyword)) {
+		if (file.getTitle().contains(keyword) || file.getAuthor().contains(keyword)) {
 			return true;
 		}
 		if (file instanceof TaggedFile) {
-			if (((TaggedFile) file).getAlbum().equals(keyword)) {
+			if (((TaggedFile) file).getAlbum().contains(keyword)) {
 				return true;
 			}
 		}

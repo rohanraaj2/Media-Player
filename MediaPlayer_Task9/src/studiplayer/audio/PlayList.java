@@ -20,7 +20,11 @@ public class PlayList implements Iterable<AudioFile> {
 	public PlayList() {}
 
 	public PlayList(String m3uPathname) {
-		loadFromM3U(m3uPathname);
+		try {
+            loadFromM3U(m3uPathname);
+        } catch (Exception e) {
+            throw new RuntimeException(e.getMessage());
+        }
 	}
 	
 	public void add(AudioFile file) {
@@ -54,28 +58,30 @@ public class PlayList implements Iterable<AudioFile> {
 		iterator.next();
 	}
 	
-	public void loadFromM3U(String pathname) {
+	public void loadFromM3U(String pathname) throws NotPlayableException {
 		List<String> lines = new ArrayList<>();
 		Scanner scanner = null;
 		listOfAudioFiles.clear();
-		
 		try {
 			scanner = new Scanner(new File(pathname));
 			int lineNo = 1;
-			
 			while (scanner.hasNextLine()) {
 				String line = scanner.nextLine();
 				if (line.isBlank() || line.charAt(0) == '#') {
 					continue;
 				} else {
-					AudioFile audioFile = AudioFileFactory.createAudioFile(line);
-					add(audioFile);	
+					try {
+						AudioFile audioFile = AudioFileFactory.createAudioFile(line);
+						add(audioFile);
+					} catch (Exception e){
+						e.printStackTrace();
+					}
 				}
 				String lineWithNumber = String.format("%03d: %s", lineNo++, line);
 				lines.add(lineWithNumber);
 			}
-		} catch (Exception e) {
-			e.printStackTrace();
+		} catch (IOException e) {
+			throw new NotPlayableException("Error reading file: " + pathname, e);
 		} finally {
 			try {
 				System.out.println("File " + pathname + " read!");
@@ -140,5 +146,18 @@ public class PlayList implements Iterable<AudioFile> {
 	
 	public void jumpToAudioFile(AudioFile audiofile) {
 		iterator.jumpToAudioFile(audiofile);
+	}
+	
+	@Override
+	public String toString() {
+	    StringBuilder result = new StringBuilder("[");
+	    for (int i = 0; i < listOfAudioFiles.size(); i++) {
+	        result.append(listOfAudioFiles.get(i).toString());
+	        if (i < listOfAudioFiles.size() - 1) {
+	            result.append(", ");
+	        }
+	    }
+	    result.append("]");
+	    return result.toString();
 	}
 }

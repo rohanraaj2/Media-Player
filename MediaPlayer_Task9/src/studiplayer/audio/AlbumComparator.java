@@ -6,22 +6,16 @@ public class AlbumComparator implements Comparator<AudioFile> {
 	
 	@Override
 	public int compare(AudioFile o1, AudioFile o2) {
-		String album1 = o1 instanceof TaggedFile ? ((TaggedFile) o1).getAlbum() : "";
-	    String album2 = o2 instanceof TaggedFile ? ((TaggedFile) o2).getAlbum() : "";
+		String album1 = o1 instanceof TaggedFile ? ((TaggedFile) o1).getAlbum() : null;
+	    String album2 = o2 instanceof TaggedFile ? ((TaggedFile) o2).getAlbum() : null;
 	    
-	    if (album1.isEmpty() && !album2.isEmpty()) {
+	    if (album1 == null && album2 != null) {
 	        return -1;
-	    } else if (!album1.isEmpty() && album2.isEmpty()) {
+	    } else if (album1 != null && album2 == null) {
 	        return 1;
-	    } else {
-	        char firstCharO1 = album1.charAt(0);
-	        char firstCharO2 = album2.charAt(0);
-	        if (firstCharO1 < firstCharO2) {
-	            return -1;
-	        } else if (firstCharO1 > firstCharO2) {
-	            return 1;
-	        }
-	    }
-	    return 0;
+	    } else if (album1 == null && album2 == null) {
+        	return 0;
+	    } 
+	    return album1.compareTo(album2);
 	}
 }
