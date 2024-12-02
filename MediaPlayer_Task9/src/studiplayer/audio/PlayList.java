@@ -13,10 +13,9 @@ import java.lang.Iterable;
 public class PlayList implements Iterable<AudioFile> {
 	
 	private List<AudioFile> listOfAudioFiles = new LinkedList<>();
-	private int current = 0;
 	private String search;
 	private SortCriterion sortCriterion = SortCriterion.DEFAULT;
-	ControllablePlayListIterator iterator;
+	private ControllablePlayListIterator iterator = new ControllablePlayListIterator(listOfAudioFiles);
 
 	public PlayList() {}
 
@@ -37,24 +36,27 @@ public class PlayList implements Iterable<AudioFile> {
 	}
 	
 	public AudioFile currentAudioFile() {
-		if (current > listOfAudioFiles.size() - 1) {
-			return null;
+		List<AudioFile> list = iterator.getListOfSongs();
+		if(iterator.getIndex() >= list.size()) {
+			iterator.setIndex(0);
 		}
-		return this.listOfAudioFiles.get(current);
+		if (listOfAudioFiles.size() == 0) {
+			return null;
+		} else {
+			if (iterator.getIndex() < 0) {
+				iterator.setIndex(0);
+			}
+			return iterator.getListOfSongs().get(iterator.getIndex());
+		}
 	}
 	
 	public void nextSong() {
-		if (current > this.size() - 2) { // 1 extra decrement because the index in the list starts at 0
-			current = 0;
-		} else {
-			current += 1;
-		}
+		iterator.next();
 	}
 	
 	public void loadFromM3U(String pathname) {
 		List<String> lines = new ArrayList<>();
 		Scanner scanner = null;
-		current = 0;
 		listOfAudioFiles.clear();
 		
 		try {
@@ -114,20 +116,13 @@ public class PlayList implements Iterable<AudioFile> {
 		return listOfAudioFiles;
 	}
 	
-	public int getCurrent() {
-		return current;
-	}
-	
-	public void setCurrent(int current) {
-		this.current = current;
-	}
-	
 	public SortCriterion getSortCriterion() {
 		return sortCriterion;
 	}
 
 	public void setSortCriterion(SortCriterion sortCriterion) {
 		this.sortCriterion = sortCriterion;
+		iterator.searchAndSort(listOfAudioFiles, search, sortCriterion);
 	}
 	
 	public String getSearch() {
@@ -136,9 +131,14 @@ public class PlayList implements Iterable<AudioFile> {
 
 	public void setSearch(String search) {
 		this.search = search;
+		iterator.searchAndSort(listOfAudioFiles, search, sortCriterion);
 	}
 	
 	public Iterator<AudioFile> iterator() {
 		return new ControllablePlayListIterator(listOfAudioFiles, search, sortCriterion);
+	}
+	
+	public void jumpToAudioFile(AudioFile audiofile) {
+		iterator.jumpToAudioFile(audiofile);
 	}
 }

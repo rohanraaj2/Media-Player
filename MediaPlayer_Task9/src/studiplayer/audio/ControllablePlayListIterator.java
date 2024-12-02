@@ -6,15 +6,20 @@ import java.util.List;
 
 public class ControllablePlayListIterator implements Iterator<AudioFile> {
 
-	private List<AudioFile> listOfSongs;
-	private int index = -1;
+	private List<AudioFile> listOfSongs = new LinkedList<AudioFile>();
+	private int index = 0;
 	
 	public ControllablePlayListIterator(List<AudioFile> list) {
 		listOfSongs = list;
 	}
 	
 	public ControllablePlayListIterator(List<AudioFile> list, String search, SortCriterion sort) {
-		List<AudioFile> iteratorList = new LinkedList<>();
+		searchAndSort(list, search, sort);
+	}
+	
+	public void searchAndSort(List<AudioFile> list, String search, SortCriterion sort) {
+		index = 0;
+		List<AudioFile> iteratorList = new LinkedList<AudioFile>();
 		if (search == null || search.isEmpty()) {
 			iteratorList.addAll(list);
 		} else {
@@ -58,24 +63,56 @@ public class ControllablePlayListIterator implements Iterator<AudioFile> {
     }
 	
 	public AudioFile jumpToAudioFile(AudioFile file) {
-		if (listOfSongs.contains(file)) {
-			index = listOfSongs.indexOf(file);
-			return file;
-		}
-		return null;
+	    int fileIndex = listOfSongs.indexOf(file);
+	    if (fileIndex != -1) {
+	        if (fileIndex == index) {
+	            return listOfSongs.get(index);
+	        } else if (fileIndex > index) {
+	            while (index < fileIndex) {
+	                next();
+	            }
+	        } else {
+	            index = 0;
+	            while (index <= fileIndex) {
+	                next();
+	            }
+	        }
+	        return listOfSongs.get(fileIndex);
+	    }
+	    return null;
 	}
 
 	@Override
 	public AudioFile next() {
-		index += 1;
-		return listOfSongs.get(index);
+		if (this.listOfSongs.isEmpty()) {
+			return null;
+		}
+		AudioFile song = this.listOfSongs.get(index);
+		if (hasNext()) {
+			index += 1;
+		} else {
+			index = 0;
+		}
+		return song;
 	}
 
 	@Override
 	public boolean hasNext() {
-		if (index < listOfSongs.size() - 1) {
+		if (index < listOfSongs.size()) {
 			return true;
 		}
 		return false;
+	}
+	
+	public List<AudioFile> getListOfSongs() {
+		return this.listOfSongs;
+	}
+
+	public int getIndex() {
+		return this.index;
+	}
+	
+	public void setIndex(int index) {
+		this.index = index;
 	}
 }
