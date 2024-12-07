@@ -3,7 +3,6 @@
 	<classpathentry kind="src" path="test"/>
 	<classpathentry kind="src" path="cert"/>
 	<classpathentry kind="src" path="src"/>
-	<classpathentry kind="src" path="examples"/>
 	<classpathentry kind="src" path="playlists"/>
 	<classpathentry kind="src" path="audiofiles"/>
 	<classpathentry kind="src" path="lib"/>
