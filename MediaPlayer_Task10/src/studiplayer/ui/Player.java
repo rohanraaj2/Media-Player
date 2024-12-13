@@ -9,12 +9,12 @@ import javafx.scene.control.Button;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableRow;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
+import javafx.scene.control.TitledPane;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.FlowPane;
-import javafx.scene.layout.HBox;
+import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
@@ -36,38 +36,48 @@ public class Player extends Application {
 	private Label playListLabel = new Label("Playlist");
 	private Label playTimeLabel = new Label("Current Song");
 	private Label currentSongLabel = new Label("Playtime");
-	private ChoiceBox sortChoiceBox = new ChoiceBox();
+	private ChoiceBox<String> sortChoiceBox = new ChoiceBox<>();
 	private TextField searchTextField = new TextField();
 	private Button filterButton = new Button("display");
 	
 	public Player() {}
 	
 	public void start(Stage stage) {
-		TableView<String> table = new TableView<String>();
+		TableView<String> table = new TableView<>();
 		String path = "playList.cert.m3u";
 		String fileName = "etc";
-//		useCertPlayList = true;
 		BorderPane mainPane = new BorderPane();
 		stage.setTitle("Player");
-		
+		GridPane positionBox = new GridPane();
+		positionBox.setPadding(new Insets(5));
+		positionBox.setHgap(10);
+		positionBox.setVgap(10);
+	
+		TitledPane filterHeader = new TitledPane();
+		filterHeader.setText("Filter");
+		filterHeader.setCollapsible(true);
+	
 		Label searchLabel = new Label("Search text");
-		HBox searchBox = new HBox(10);
-		searchBox.getChildren().addAll(searchLabel, searchTextField);
-        
+		searchTextField.setPromptText("");
+		positionBox.add(searchLabel, 0, 0);
+		positionBox.add(searchTextField, 1, 0);
+	
 		Label sortLabel = new Label("Sort by");
-		HBox sortBox = new HBox(10);
+		sortChoiceBox.getItems().addAll("AUTHOR", "TITLE", "ALBUM", "DURATION");
 		sortChoiceBox.setValue("AUTHOR");
-        sortBox.getChildren().addAll(sortLabel, sortChoiceBox, filterButton);
-        
-		VBox filterBox = new VBox(10);
-		filterBox.getChildren().addAll(searchBox, sortBox);
+		positionBox.add(sortLabel, 0, 1);
+		positionBox.add(sortChoiceBox, 1, 1);
+	
+		positionBox.add(filterButton, 2, 1);
 		
+		VBox filterBox = new VBox(0);
+		filterBox.getChildren().addAll(filterHeader, positionBox);
 		mainPane.setTop(filterBox);
 		
-		TableColumn artist = new TableColumn("Artist");
-        TableColumn title = new TableColumn("Title");
-        TableColumn album = new TableColumn("Album");
-        TableColumn duration = new TableColumn("Duration");
+		TableColumn<String, String> artist = new TableColumn<>("Artist");
+		TableColumn<String, String> title = new TableColumn<>("Title");
+		TableColumn<String, String> album = new TableColumn<>("Album");
+		TableColumn<String, String> duration = new TableColumn<>("Duration");
         
         table.getColumns().addAll(artist, title, album, duration);
 		
@@ -84,33 +94,34 @@ public class Player extends Application {
 			setPlayList(path);
 		}
 		
-		VBox songInfoBox = new VBox(10);
+		VBox songInfoBox = new VBox(0);
 		
-		HBox playListBox = new HBox(10);
+		GridPane positionBoxBottom = new GridPane();
+		positionBoxBottom.setPadding(new Insets(5));
+		positionBoxBottom.setHgap(10);
+		positionBoxBottom.setVgap(10);
+		
 		Label pathLabel = new Label(path);
-		playListBox.getChildren().addAll(playListLabel, pathLabel);
-		
-		HBox currentSongBox = new HBox(10);
+		positionBoxBottom.add(playListLabel, 0, 0);
+		positionBoxBottom.add(pathLabel, 1, 0);
+
 		Label songNameLabel = new Label(fileName);
-		currentSongBox.getChildren().addAll(currentSongLabel, songNameLabel);
+		positionBoxBottom.add(currentSongLabel, 0, 1);
+		positionBoxBottom.add(songNameLabel, 1, 1);
 		
-		HBox playTimeBox = new HBox(10);
 		Label durationLabel = new Label(path);
-		playTimeBox.getChildren().addAll(playTimeLabel, durationLabel);
-		
-		songInfoBox.getChildren().addAll(table, playListBox, currentSongBox, playTimeBox);
+		positionBoxBottom.add(playTimeLabel, 0, 2);
+		positionBoxBottom.add(durationLabel, 1, 2);
+	
+		songInfoBox.getChildren().addAll(table, positionBoxBottom);
 		mainPane.setCenter(songInfoBox);
 		
 		FlowPane buttonPane = new FlowPane();
 		buttonPane.getChildren().addAll(playButton, pauseButton, stopButton, nextButton);
-//		buttonPane.setHgap(10);
 		buttonPane.setAlignment(Pos.CENTER);
-//		FlowPane.setMargin(tooBigButton, new Insets(10, 10, 10, 10));
-//		FlowPane.setMargin(tooSmallButton, new Insets(10, 10, 10, 10));
-//		FlowPane.setMargin(nailedItButton, new Insets(10, 10, 10, 10));
 		mainPane.setBottom(buttonPane);
-		
-		Scene scene = new Scene(mainPane, 600, 40);
+
+		Scene scene = new Scene(mainPane, 600, 400);
 		stage.setScene(scene);
 		stage.show();
 	}
