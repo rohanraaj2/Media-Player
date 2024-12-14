@@ -12,14 +12,20 @@ import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 import javafx.scene.control.TitledPane;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.GridPane;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
+import studiplayer.audio.AudioFile;
 import studiplayer.audio.NotPlayableException;
 import studiplayer.audio.PlayList;
+import studiplayer.audio.SampledFile;
+import studiplayer.audio.TaggedFile;
 
 public class Player extends Application {
 	
@@ -34,8 +40,8 @@ public class Player extends Application {
 	private Button stopButton = new Button("stop");
 	private Button nextButton = new Button("next");
 	private Label playListLabel = new Label("Playlist");
-	private Label playTimeLabel = new Label("Current Song");
-	private Label currentSongLabel = new Label("Playtime");
+	private Label currentSongLabel = new Label("Current Song");
+	private Label playTimeLabel = new Label("Playtime");
 	private ChoiceBox<String> sortChoiceBox = new ChoiceBox<>();
 	private TextField searchTextField = new TextField();
 	private Button filterButton = new Button("display");
@@ -45,13 +51,17 @@ public class Player extends Application {
 	public void start(Stage stage) {
 		TableView<String> table = new TableView<>();
 		String path = "playList.cert.m3u";
-		String fileName = "etc";
+		AudioFile song = null;
+		String songName = "";
+		String songduration = "00:00";
+		
 		BorderPane mainPane = new BorderPane();
 		stage.setTitle("Player");
+		
 		GridPane positionBox = new GridPane();
 		positionBox.setPadding(new Insets(5));
-		positionBox.setHgap(10);
-		positionBox.setVgap(10);
+		positionBox.setHgap(20);
+		positionBox.setVgap(5);
 	
 		TitledPane filterHeader = new TitledPane();
 		filterHeader.setText("Filter");
@@ -65,12 +75,13 @@ public class Player extends Application {
 		Label sortLabel = new Label("Sort by");
 		sortChoiceBox.getItems().addAll("AUTHOR", "TITLE", "ALBUM", "DURATION");
 		sortChoiceBox.setValue("AUTHOR");
+		sortChoiceBox.prefWidthProperty().bind(searchTextField.widthProperty());
 		positionBox.add(sortLabel, 0, 1);
 		positionBox.add(sortChoiceBox, 1, 1);
 	
 		positionBox.add(filterButton, 2, 1);
 		
-		VBox filterBox = new VBox(0);
+		VBox filterBox = new VBox(5);
 		filterBox.getChildren().addAll(filterHeader, positionBox);
 		mainPane.setTop(filterBox);
 		
@@ -88,10 +99,10 @@ public class Player extends Application {
             if (file != null) {
 //            	System.out.println(file.getPath());
             	path = file.getPath();
-            	fileName = file.getName();
-            	
             }
 			setPlayList(path);
+			song = playList.currentAudioFile();
+			songduration = song instanceof SampledFile ? ((SampledFile) song).formatDuration() : "00:00";
 		}
 		
 		VBox songInfoBox = new VBox(0);
@@ -105,21 +116,37 @@ public class Player extends Application {
 		positionBoxBottom.add(playListLabel, 0, 0);
 		positionBoxBottom.add(pathLabel, 1, 0);
 
-		Label songNameLabel = new Label(fileName);
+		if (song != null) {
+			songName = song.toString();
+		}
+		Label songNameLabel = new Label(songName);
 		positionBoxBottom.add(currentSongLabel, 0, 1);
 		positionBoxBottom.add(songNameLabel, 1, 1);
 		
-		Label durationLabel = new Label(path);
+		Label durationLabel = new Label(songduration);
 		positionBoxBottom.add(playTimeLabel, 0, 2);
 		positionBoxBottom.add(durationLabel, 1, 2);
 	
 		songInfoBox.getChildren().addAll(table, positionBoxBottom);
 		mainPane.setCenter(songInfoBox);
 		
-		FlowPane buttonPane = new FlowPane();
-		buttonPane.getChildren().addAll(playButton, pauseButton, stopButton, nextButton);
-		buttonPane.setAlignment(Pos.CENTER);
-		mainPane.setBottom(buttonPane);
+		String iconPath = "C:/Users/rohan/Github/Programming-2/MediaPlayer_Task10/src/icons/";
+		Image playIcon = new Image(new File(iconPath + "play.jpg").toURI().toString());
+		Image pauseIcon = new Image(new File(iconPath + "pause.jpg").toURI().toString());
+		Image stopIcon = new Image(new File(iconPath + "stop.jpg").toURI().toString());
+		Image nextIcon = new Image(new File(iconPath + "next.jpg").toURI().toString());
+
+		// Create buttons with icons
+		playButton = new Button("", new ImageView(playIcon));
+		pauseButton = new Button("", new ImageView(pauseIcon));
+		stopButton = new Button("", new ImageView(stopIcon));
+		nextButton = new Button("", new ImageView(nextIcon));
+
+		HBox controlBox = new HBox(10, playButton, pauseButton, stopButton, nextButton);
+		controlBox.setAlignment(Pos.CENTER);
+		controlBox.setPadding(new Insets(10));
+
+		mainPane.setBottom(controlBox);
 
 		Scene scene = new Scene(mainPane, 600, 400);
 		stage.setScene(scene);
@@ -146,7 +173,6 @@ public class Player extends Application {
 		
 	}
 
-	
 	public static void main(String[] args) {
 		launch();
 	}
