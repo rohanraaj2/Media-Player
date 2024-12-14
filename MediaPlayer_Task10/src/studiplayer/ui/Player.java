@@ -1,6 +1,8 @@
 package studiplayer.ui;
 
 import java.io.File;
+import java.net.URL;
+
 import javafx.application.Application;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -15,7 +17,6 @@ import javafx.scene.control.TitledPane;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
@@ -25,7 +26,6 @@ import studiplayer.audio.AudioFile;
 import studiplayer.audio.NotPlayableException;
 import studiplayer.audio.PlayList;
 import studiplayer.audio.SampledFile;
-import studiplayer.audio.TaggedFile;
 
 public class Player extends Application {
 	
@@ -130,17 +130,10 @@ public class Player extends Application {
 		songInfoBox.getChildren().addAll(table, positionBoxBottom);
 		mainPane.setCenter(songInfoBox);
 		
-		String iconPath = "C:/Users/rohan/Github/Programming-2/MediaPlayer_Task10/src/icons/";
-		Image playIcon = new Image(new File(iconPath + "play.jpg").toURI().toString());
-		Image pauseIcon = new Image(new File(iconPath + "pause.jpg").toURI().toString());
-		Image stopIcon = new Image(new File(iconPath + "stop.jpg").toURI().toString());
-		Image nextIcon = new Image(new File(iconPath + "next.jpg").toURI().toString());
-
-		// Create buttons with icons
-		playButton = new Button("", new ImageView(playIcon));
-		pauseButton = new Button("", new ImageView(pauseIcon));
-		stopButton = new Button("", new ImageView(stopIcon));
-		nextButton = new Button("", new ImageView(nextIcon));
+		playButton = playbackButton("play.jpg");
+		pauseButton = playbackButton("pause.jpg");
+		stopButton = playbackButton("stop.jpg");
+		nextButton = playbackButton("next.jpg");
 
 		HBox controlBox = new HBox(10, playButton, pauseButton, stopButton, nextButton);
 		controlBox.setAlignment(Pos.CENTER);
@@ -151,6 +144,20 @@ public class Player extends Application {
 		Scene scene = new Scene(mainPane, 600, 400);
 		stage.setScene(scene);
 		stage.show();
+	}
+	
+	public Button playbackButton(String iconfilename) {
+		URL url = getClass().getResource("/icons/" + iconfilename); 
+		Image icon = new Image(url.toString());
+		ImageView imageView = new ImageView(icon);
+		
+		imageView.setFitHeight(20);
+		imageView.setFitWidth(20);
+		
+		Button button = new Button("", imageView);
+		button.setStyle("-fx-background-color: #fff;");
+
+		return button;
 	}
 
 	public void setUseCertPlayList(boolean value) {
