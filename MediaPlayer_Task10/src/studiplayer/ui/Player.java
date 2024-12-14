@@ -30,9 +30,9 @@ import studiplayer.audio.SampledFile;
 public class Player extends Application {
 	
 	public static final String DEFAULT_PLAYLIST = "playlists/DefaultPlayList.m3u";
-	private String PLAYLIST_DIRECTORY;
-	private String INITIAL_PLAY_TIME_LABEL;
-	private String NO_CURRENT_SONG;
+	private static final String PLAYLIST_DIRECTORY = "playlists";
+	private static final String INITIAL_PLAY_TIME_LABEL = "00:00";
+	private static final String NO_CURRENT_SONG = "";
 	private PlayList playList;
 	private boolean useCertPlayList = false;
 	private Button playButton = new Button("play");
@@ -53,7 +53,7 @@ public class Player extends Application {
 		String path = "playList.cert.m3u";
 		AudioFile song = null;
 		String songName = "";
-		String songduration = "00:00";
+		String songduration = INITIAL_PLAY_TIME_LABEL;
 		
 		BorderPane mainPane = new BorderPane();
 		stage.setTitle("Player");
@@ -102,7 +102,7 @@ public class Player extends Application {
             }
 			setPlayList(path);
 			song = playList.currentAudioFile();
-			songduration = song instanceof SampledFile ? ((SampledFile) song).formatDuration() : "00:00";
+			songduration = song instanceof SampledFile ? ((SampledFile) song).formatDuration() : INITIAL_PLAY_TIME_LABEL;
 		}
 		
 		VBox songInfoBox = new VBox(0);
