@@ -9,6 +9,7 @@ import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.ChoiceBox;
+import javafx.scene.control.ContentDisplay;
 import javafx.scene.control.Label;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
@@ -32,7 +33,7 @@ public class Player extends Application {
 	public static final String DEFAULT_PLAYLIST = "playlists/DefaultPlayList.m3u";
 	private static final String PLAYLIST_DIRECTORY = "playlists";
 	private static final String INITIAL_PLAY_TIME_LABEL = "00:00";
-	private static final String NO_CURRENT_SONG = "";
+	private static final String NO_CURRENT_SONG = "-";
 	private PlayList playList;
 	private boolean useCertPlayList = false;
 	private Button playButton = new Button("play");
@@ -97,12 +98,8 @@ public class Player extends Application {
 			fileChooser.setTitle("Select File To Load");
 			File file = fileChooser.showOpenDialog(stage);
             if (file != null) {
-//            	System.out.println(file.getPath());
             	path = file.getPath();
             }
-			setPlayList(path);
-			song = playList.currentAudioFile();
-			songduration = song instanceof SampledFile ? ((SampledFile) song).formatDuration() : INITIAL_PLAY_TIME_LABEL;
 		}
 		
 		VBox songInfoBox = new VBox(0);
@@ -112,17 +109,18 @@ public class Player extends Application {
 		positionBoxBottom.setHgap(10);
 		positionBoxBottom.setVgap(10);
 		
+		setPlayList(path);
 		Label pathLabel = new Label(path);
 		positionBoxBottom.add(playListLabel, 0, 0);
 		positionBoxBottom.add(pathLabel, 1, 0);
 
-		if (song != null) {
-			songName = song.toString();
-		}
+		song = playList.currentAudioFile();
+		songName = song == null? NO_CURRENT_SONG: song.toString();
 		Label songNameLabel = new Label(songName);
 		positionBoxBottom.add(currentSongLabel, 0, 1);
 		positionBoxBottom.add(songNameLabel, 1, 1);
 		
+		songduration = song instanceof SampledFile ? ((SampledFile) song).formatDuration() : INITIAL_PLAY_TIME_LABEL;
 		Label durationLabel = new Label(songduration);
 		positionBoxBottom.add(playTimeLabel, 0, 2);
 		positionBoxBottom.add(durationLabel, 1, 2);
@@ -130,10 +128,10 @@ public class Player extends Application {
 		songInfoBox.getChildren().addAll(table, positionBoxBottom);
 		mainPane.setCenter(songInfoBox);
 		
-		playButton = playbackButton("play.jpg");
-		pauseButton = playbackButton("pause.jpg");
-		stopButton = playbackButton("stop.jpg");
-		nextButton = playbackButton("next.jpg");
+		playButton = createButton("play.jpg");
+		pauseButton = createButton("pause.jpg");
+		stopButton = createButton("stop.jpg");
+		nextButton = createButton("next.jpg");
 
 		HBox controlBox = new HBox(10, playButton, pauseButton, stopButton, nextButton);
 		controlBox.setAlignment(Pos.CENTER);
@@ -144,24 +142,6 @@ public class Player extends Application {
 		Scene scene = new Scene(mainPane, 600, 400);
 		stage.setScene(scene);
 		stage.show();
-	}
-	
-	public Button playbackButton(String iconfilename) {
-		URL url = getClass().getResource("/icons/" + iconfilename); 
-		Image icon = new Image(url.toString());
-		ImageView imageView = new ImageView(icon);
-		
-		imageView.setFitHeight(20);
-		imageView.setFitWidth(20);
-		
-		Button button = new Button("", imageView);
-		button.setStyle("-fx-background-color: #fff;");
-
-		return button;
-	}
-
-	public void setUseCertPlayList(boolean value) {
-		this.useCertPlayList = value;
 	}
 	
 	public void setPlayList(String pathname) {
@@ -176,8 +156,22 @@ public class Player extends Application {
 		}
 	}
 	
-	public void createButton(String iconfile) {
-		
+	private Button createButton(String iconfile) {
+		Button button = null;
+		try {
+			URL url = getClass().getResource("/icons/" + iconfile);
+			Image icon = new Image(url.toString());
+			ImageView imageView = new ImageView(icon);
+			imageView.setFitHeight(20);
+			imageView.setFitWidth(20);
+			button = new Button("", imageView);
+			button.setContentDisplay(ContentDisplay.GRAPHIC_ONLY);
+			button.setStyle("-fx-background-color: #fff;");
+		} catch (Exception e) {
+			System.out.println("Image " + "icons/" + iconfile + " not found!");
+			System.exit(-1);
+		}
+		return button;
 	}
 
 	public static void main(String[] args) {
