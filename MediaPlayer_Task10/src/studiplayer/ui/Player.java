@@ -64,32 +64,31 @@ public class Player extends Application {
 		stage.setTitle("Player");
 		
 		// Filter Box
-		GridPane positionBoxTop = new GridPane();
-		positionBoxTop.setPadding(new Insets(5));
-		positionBoxTop.setHgap(20);
-		positionBoxTop.setVgap(5);
+		GridPane filterFieldsBox = new GridPane();
+		filterFieldsBox.setPadding(new Insets(5));
+		filterFieldsBox.setHgap(20);
+		filterFieldsBox.setVgap(5);
 		
 		TitledPane filterHeader = new TitledPane();
 		filterHeader.setText("Filter");
-		filterHeader.setCollapsible(true);
-	
 		Label searchLabel = new Label("Search text");
 		searchTextField.setPromptText("");
-		positionBoxTop.add(searchLabel, 0, 0);
-		positionBoxTop.add(searchTextField, 1, 0);
+		filterFieldsBox.add(searchLabel, 0, 0);
+		filterFieldsBox.add(searchTextField, 1, 0);
 	
 		Label sortLabel = new Label("Sort by");
 		sortChoiceBox.getItems().addAll("AUTHOR", "TITLE", "ALBUM", "DURATION");
 		sortChoiceBox.setValue("AUTHOR");
 		sortChoiceBox.prefWidthProperty().bind(searchTextField.widthProperty());
-		positionBoxTop.add(sortLabel, 0, 1);
-		positionBoxTop.add(sortChoiceBox, 1, 1);
+		filterFieldsBox.add(sortLabel, 0, 1);
+		filterFieldsBox.add(sortChoiceBox, 1, 1);
 	
-		positionBoxTop.add(filterButton, 2, 1);
+		filterFieldsBox.add(filterButton, 2, 1);
 		
 		VBox filterBox = new VBox(5);
-		filterBox.getChildren().addAll(filterHeader, positionBoxTop);
-		mainPane.setTop(filterBox);
+		filterBox.getChildren().addAll(filterHeader, filterFieldsBox);
+		filterHeader.setContent(filterBox);
+		mainPane.setTop(filterHeader);
 		
 		// Table
 		TableView<String> table = new TableView<>();
@@ -97,35 +96,33 @@ public class Player extends Application {
 		TableColumn<String, String> title = new TableColumn<>("Title");
 		TableColumn<String, String> album = new TableColumn<>("Album");
 		TableColumn<String, String> duration = new TableColumn<>("Duration");
-        
-        table.getColumns().addAll(artist, title, album, duration);
 		
-        // Song Info
-		VBox songInfoBox = new VBox(0);
+		table.getColumns().addAll(artist, title, album, duration);
+		mainPane.setCenter(table);
 		
-		GridPane positionBoxBottom = new GridPane();
-		positionBoxBottom.setPadding(new Insets(5));
-		positionBoxBottom.setHgap(10);
-		positionBoxBottom.setVgap(10);
+		// Song Info
+		VBox bottomBox = new VBox(0);
+		
+		GridPane songInfoBox = new GridPane();
+		songInfoBox.setPadding(new Insets(5));
+		songInfoBox.setHgap(10);
+		songInfoBox.setVgap(10);
 		
 		setPlayList(path);
 		Label pathLabel = new Label(path);
-		positionBoxBottom.add(playListLabel, 0, 0);
-		positionBoxBottom.add(pathLabel, 1, 0);
+		songInfoBox.add(playListLabel, 0, 0);
+		songInfoBox.add(pathLabel, 1, 0);
 
 		AudioFile song = playList.currentAudioFile();
 		String songName = song == null? NO_CURRENT_SONG: song.toString();
 		Label songNameLabel = new Label(songName);
-		positionBoxBottom.add(currentSongLabel, 0, 1);
-		positionBoxBottom.add(songNameLabel, 1, 1);
+		songInfoBox.add(currentSongLabel, 0, 1);
+		songInfoBox.add(songNameLabel, 1, 1);
 		
 		String songduration = song instanceof SampledFile ? ((SampledFile) song).formatDuration() : INITIAL_PLAY_TIME_LABEL;
 		Label durationLabel = new Label(songduration);
-		positionBoxBottom.add(playTimeLabel, 0, 2);
-		positionBoxBottom.add(durationLabel, 1, 2);
-	
-		songInfoBox.getChildren().addAll(table, positionBoxBottom);
-		mainPane.setCenter(songInfoBox);
+		songInfoBox.add(playTimeLabel, 0, 2);
+		songInfoBox.add(durationLabel, 1, 2);
 		
 		// PlayBack Buttons
 		playButton = createButton("play.jpg");
@@ -137,7 +134,8 @@ public class Player extends Application {
 		controlBox.setAlignment(Pos.CENTER);
 		controlBox.setPadding(new Insets(10));
 
-		mainPane.setBottom(controlBox);
+		bottomBox.getChildren().addAll(songInfoBox, controlBox);
+		mainPane.setBottom(bottomBox);
 
 		Scene scene = new Scene(mainPane, 600, 400);
 		stage.setScene(scene);
