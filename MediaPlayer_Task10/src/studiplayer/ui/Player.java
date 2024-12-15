@@ -11,7 +11,6 @@ import javafx.scene.control.Button;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.ContentDisplay;
 import javafx.scene.control.Label;
-import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 import javafx.scene.control.TitledPane;
@@ -64,31 +63,30 @@ public class Player extends Application {
 		stage.setTitle("Player");
 		
 		// Filter Box
+		TitledPane filterBox = new TitledPane();
+		filterBox.setText("Filter");
+		
 		GridPane filterFieldsBox = new GridPane();
 		filterFieldsBox.setPadding(new Insets(5));
 		filterFieldsBox.setHgap(20);
 		filterFieldsBox.setVgap(5);
 		
-		TitledPane filterHeader = new TitledPane();
-		filterHeader.setText("Filter");
 		Label searchLabel = new Label("Search text");
-		searchTextField.setPromptText("");
 		filterFieldsBox.add(searchLabel, 0, 0);
+		searchTextField.setPromptText("");
 		filterFieldsBox.add(searchTextField, 1, 0);
 	
 		Label sortLabel = new Label("Sort by");
+		filterFieldsBox.add(sortLabel, 0, 1);
 		sortChoiceBox.getItems().addAll("AUTHOR", "TITLE", "ALBUM", "DURATION");
 		sortChoiceBox.setValue("AUTHOR");
 		sortChoiceBox.prefWidthProperty().bind(searchTextField.widthProperty());
-		filterFieldsBox.add(sortLabel, 0, 1);
 		filterFieldsBox.add(sortChoiceBox, 1, 1);
 	
 		filterFieldsBox.add(filterButton, 2, 1);
 		
-		VBox filterBox = new VBox(5);
-		filterBox.getChildren().addAll(filterHeader, filterFieldsBox);
-		filterHeader.setContent(filterBox);
-		mainPane.setTop(filterHeader);
+		filterBox.setContent(filterFieldsBox);
+		mainPane.setTop(filterBox);
 		
 		// Table
 		setPlayList(path);
@@ -96,8 +94,6 @@ public class Player extends Application {
 		mainPane.setCenter(table);
 		
 		// Song Info
-		VBox bottomBox = new VBox(0);
-		
 		GridPane songInfoBox = new GridPane();
 		songInfoBox.setPadding(new Insets(5));
 		songInfoBox.setHgap(10);
@@ -128,6 +124,7 @@ public class Player extends Application {
 		controlBox.setAlignment(Pos.CENTER);
 		controlBox.setPadding(new Insets(10));
 
+		VBox bottomBox = new VBox(0);
 		bottomBox.getChildren().addAll(songInfoBox, controlBox);
 		mainPane.setBottom(bottomBox);
 
