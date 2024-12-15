@@ -50,7 +50,7 @@ public class Player extends Application {
 	public Player() {}
 	
 	public void start(Stage stage) {
-		String path = PLAYLIST_DIRECTORY + "playList.cert.m3u";
+		String path = PLAYLIST_DIRECTORY + "/playList.cert.m3u";
 		if (!this.useCertPlayList) {
 			FileChooser fileChooser = new FileChooser();
 			fileChooser.setTitle("Select File To Load");
@@ -91,13 +91,8 @@ public class Player extends Application {
 		mainPane.setTop(filterHeader);
 		
 		// Table
-		TableView<String> table = new TableView<>();
-		TableColumn<String, String> artist = new TableColumn<>("Artist");
-		TableColumn<String, String> title = new TableColumn<>("Title");
-		TableColumn<String, String> album = new TableColumn<>("Album");
-		TableColumn<String, String> duration = new TableColumn<>("Duration");
-		
-		table.getColumns().addAll(artist, title, album, duration);
+		setPlayList(path);
+		TableView<Song> table = new SongTable(playList);
 		mainPane.setCenter(table);
 		
 		// Song Info
@@ -108,7 +103,6 @@ public class Player extends Application {
 		songInfoBox.setHgap(10);
 		songInfoBox.setVgap(10);
 		
-		setPlayList(path);
 		Label pathLabel = new Label(path);
 		songInfoBox.add(playListLabel, 0, 0);
 		songInfoBox.add(pathLabel, 1, 0);
