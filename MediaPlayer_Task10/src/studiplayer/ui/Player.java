@@ -50,42 +50,49 @@ public class Player extends Application {
 	public Player() {}
 	
 	public void start(Stage stage) {
-		TableView<String> table = new TableView<>();
-		String path = "playList.cert.m3u";
-		AudioFile song = null;
-		String songName = "";
-		String songduration = INITIAL_PLAY_TIME_LABEL;
+		String path = PLAYLIST_DIRECTORY + "playList.cert.m3u";
+		if (!this.useCertPlayList) {
+			FileChooser fileChooser = new FileChooser();
+			fileChooser.setTitle("Select File To Load");
+			File file = fileChooser.showOpenDialog(stage);
+			if (file != null) {
+				path = file.getPath();
+			}
+		}
 		
 		BorderPane mainPane = new BorderPane();
 		stage.setTitle("Player");
 		
-		GridPane positionBox = new GridPane();
-		positionBox.setPadding(new Insets(5));
-		positionBox.setHgap(20);
-		positionBox.setVgap(5);
-	
+		// Filter Box
+		GridPane positionBoxTop = new GridPane();
+		positionBoxTop.setPadding(new Insets(5));
+		positionBoxTop.setHgap(20);
+		positionBoxTop.setVgap(5);
+		
 		TitledPane filterHeader = new TitledPane();
 		filterHeader.setText("Filter");
 		filterHeader.setCollapsible(true);
 	
 		Label searchLabel = new Label("Search text");
 		searchTextField.setPromptText("");
-		positionBox.add(searchLabel, 0, 0);
-		positionBox.add(searchTextField, 1, 0);
+		positionBoxTop.add(searchLabel, 0, 0);
+		positionBoxTop.add(searchTextField, 1, 0);
 	
 		Label sortLabel = new Label("Sort by");
 		sortChoiceBox.getItems().addAll("AUTHOR", "TITLE", "ALBUM", "DURATION");
 		sortChoiceBox.setValue("AUTHOR");
 		sortChoiceBox.prefWidthProperty().bind(searchTextField.widthProperty());
-		positionBox.add(sortLabel, 0, 1);
-		positionBox.add(sortChoiceBox, 1, 1);
+		positionBoxTop.add(sortLabel, 0, 1);
+		positionBoxTop.add(sortChoiceBox, 1, 1);
 	
-		positionBox.add(filterButton, 2, 1);
+		positionBoxTop.add(filterButton, 2, 1);
 		
 		VBox filterBox = new VBox(5);
-		filterBox.getChildren().addAll(filterHeader, positionBox);
+		filterBox.getChildren().addAll(filterHeader, positionBoxTop);
 		mainPane.setTop(filterBox);
 		
+		// Table
+		TableView<String> table = new TableView<>();
 		TableColumn<String, String> artist = new TableColumn<>("Artist");
 		TableColumn<String, String> title = new TableColumn<>("Title");
 		TableColumn<String, String> album = new TableColumn<>("Album");
@@ -93,15 +100,7 @@ public class Player extends Application {
         
         table.getColumns().addAll(artist, title, album, duration);
 		
-		if (!this.useCertPlayList) {
-			FileChooser fileChooser = new FileChooser();
-			fileChooser.setTitle("Select File To Load");
-			File file = fileChooser.showOpenDialog(stage);
-            if (file != null) {
-            	path = file.getPath();
-            }
-		}
-		
+        // Song Info
 		VBox songInfoBox = new VBox(0);
 		
 		GridPane positionBoxBottom = new GridPane();
@@ -114,13 +113,13 @@ public class Player extends Application {
 		positionBoxBottom.add(playListLabel, 0, 0);
 		positionBoxBottom.add(pathLabel, 1, 0);
 
-		song = playList.currentAudioFile();
-		songName = song == null? NO_CURRENT_SONG: song.toString();
+		AudioFile song = playList.currentAudioFile();
+		String songName = song == null? NO_CURRENT_SONG: song.toString();
 		Label songNameLabel = new Label(songName);
 		positionBoxBottom.add(currentSongLabel, 0, 1);
 		positionBoxBottom.add(songNameLabel, 1, 1);
 		
-		songduration = song instanceof SampledFile ? ((SampledFile) song).formatDuration() : INITIAL_PLAY_TIME_LABEL;
+		String songduration = song instanceof SampledFile ? ((SampledFile) song).formatDuration() : INITIAL_PLAY_TIME_LABEL;
 		Label durationLabel = new Label(songduration);
 		positionBoxBottom.add(playTimeLabel, 0, 2);
 		positionBoxBottom.add(durationLabel, 1, 2);
@@ -128,6 +127,7 @@ public class Player extends Application {
 		songInfoBox.getChildren().addAll(table, positionBoxBottom);
 		mainPane.setCenter(songInfoBox);
 		
+		// PlayBack Buttons
 		playButton = createButton("play.jpg");
 		pauseButton = createButton("pause.jpg");
 		stopButton = createButton("stop.jpg");
