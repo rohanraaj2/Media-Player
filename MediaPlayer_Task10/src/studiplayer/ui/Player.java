@@ -26,6 +26,7 @@ import studiplayer.audio.AudioFile;
 import studiplayer.audio.NotPlayableException;
 import studiplayer.audio.PlayList;
 import studiplayer.audio.SampledFile;
+import studiplayer.audio.SortCriterion;
 
 public class Player extends Application {
 	
@@ -49,6 +50,7 @@ public class Player extends Application {
 	public Player() {}
 	
 	public void start(Stage stage) {
+		SortCriterion criterian = SortCriterion.AUTHOR;
 		String path = PLAYLIST_DIRECTORY + "/playList.cert.m3u";
 		if (!this.useCertPlayList) {
 			FileChooser fileChooser = new FileChooser();
@@ -78,8 +80,8 @@ public class Player extends Application {
 	
 		Label sortLabel = new Label("Sort by");
 		filterFieldsBox.add(sortLabel, 0, 1);
-		sortChoiceBox.getItems().addAll("AUTHOR", "TITLE", "ALBUM", "DURATION");
-		sortChoiceBox.setValue("AUTHOR");
+		sortChoiceBox.getItems().addAll(SortCriterion.AUTHOR.toString(), SortCriterion.TITLE.toString(), SortCriterion.ALBUM.toString(), SortCriterion.DURATION.toString());
+		sortChoiceBox.setValue(criterian.toString());
 		sortChoiceBox.prefWidthProperty().bind(searchTextField.widthProperty());
 		filterFieldsBox.add(sortChoiceBox, 1, 1);
 	
