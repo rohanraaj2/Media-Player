@@ -25,7 +25,6 @@ import javafx.stage.Stage;
 import studiplayer.audio.AudioFile;
 import studiplayer.audio.NotPlayableException;
 import studiplayer.audio.PlayList;
-import studiplayer.audio.SampledFile;
 import studiplayer.audio.SortCriterion;
 
 public class Player extends Application {
@@ -43,7 +42,7 @@ public class Player extends Application {
 	private Label playListLabel = new Label("Playlist");
 	private Label currentSongLabel = new Label("Current Song");
 	private Label playTimeLabel = new Label("Playtime");
-	private ChoiceBox<String> sortChoiceBox = new ChoiceBox<>();
+	private ChoiceBox<SortCriterion> sortChoiceBox = new ChoiceBox<>();
 	private TextField searchTextField = new TextField();
 	private Button filterButton = new Button("display");
 	
@@ -80,8 +79,8 @@ public class Player extends Application {
 	
 		Label sortLabel = new Label("Sort by");
 		filterFieldsBox.add(sortLabel, 0, 1);
-		sortChoiceBox.getItems().addAll(SortCriterion.AUTHOR.toString(), SortCriterion.TITLE.toString(), SortCriterion.ALBUM.toString(), SortCriterion.DURATION.toString());
-		sortChoiceBox.setValue(criterian.toString());
+		sortChoiceBox.getItems().addAll(SortCriterion.AUTHOR, SortCriterion.TITLE, SortCriterion.ALBUM, SortCriterion.DURATION);
+		sortChoiceBox.setValue(criterian);
 		sortChoiceBox.prefWidthProperty().bind(searchTextField.widthProperty());
 		filterFieldsBox.add(sortChoiceBox, 1, 1);
 	
@@ -92,8 +91,15 @@ public class Player extends Application {
 		
 		// Table
 		setPlayList(path);
-		TableView<Song> table = new SongTable(playList);
+		SongTable table = new SongTable(playList);
 		mainPane.setCenter(table);
+		
+		// Event handling using Lambda Expressions
+		filterButton.setOnAction(e -> {
+			playList.setSearch(searchTextField.getText());
+			playList.setSortCriterion(sortChoiceBox.getValue());
+			table.refreshSongs();
+		});
 		
 		// Song Info
 		GridPane songInfoBox = new GridPane();
