@@ -11,7 +11,6 @@ import javafx.scene.control.Button;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.ContentDisplay;
 import javafx.scene.control.Label;
-import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 import javafx.scene.control.TitledPane;
 import javafx.scene.image.Image;
@@ -136,6 +135,49 @@ public class Player extends Application {
 		bottomBox.getChildren().addAll(songInfoBox, controlBox);
 		mainPane.setBottom(bottomBox);
 
+			try {
+				playCurrentSong();
+			} catch (NotPlayableException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
+			durationLabel.setText("00:00");
+			playButton.setDisable(true);
+			pauseButton.setDisable(false);
+			stopButton.setDisable(false);
+			nextButton.setDisable(false);
+		});
+		
+		pauseButton.setOnAction(e -> {
+			playButton.setDisable(false);
+			pauseButton.setDisable(true);
+			stopButton.setDisable(false);
+			nextButton.setDisable(false);
+			pauseCurrentSong(pause_check);
+		});
+		
+		stopButton.setOnAction(e -> {
+			playButton.setDisable(false);
+			stopButton.setDisable(true);
+			nextButton.setDisable(false);
+			durationLabel.setText("00:00");
+			stopCurrentSong();
+		});
+		
+		nextButton.setOnAction(e -> {
+			playButton.setDisable(false);
+			pauseButton.setDisable(false);
+			stopButton.setDisable(false);
+			nextButton.setDisable(true);
+			durationLabel.setText("00:00");
+			try {
+				nextSong();
+			} catch (NotPlayableException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
+		});
+		
 		Scene scene = new Scene(mainPane, 600, 400);
 		stage.setScene(scene);
 		stage.show();
@@ -169,6 +211,35 @@ public class Player extends Application {
 			System.exit(-1);
 		}
 		return button;
+	}
+	
+	private void playCurrentSong() throws NotPlayableException {
+		AudioFile currentSong = playList.currentAudioFile();
+//		currentSong.play();
+		System.out.println("Playing " + currentSong);
+		System.out.println("Filename is " + currentSong.getFilename());
+	}
+
+	private void pauseCurrentSong(boolean pause_check) {
+		AudioFile currentSong = playList.currentAudioFile();
+		currentSong.togglePause();
+		System.out.println("Pausing " + currentSong);
+		System.out.println("Filename is " + currentSong.getFilename());
+	}
+
+	private void stopCurrentSong() {
+		AudioFile currentSong = playList.currentAudioFile();
+		currentSong.stop();
+		System.out.println("Stopping " + currentSong);
+		System.out.println("Filename is " + currentSong.getFilename());
+	}
+
+	private void nextSong() throws NotPlayableException {
+		System.out.println("Switching to next audio file: stopped = false, paused = true");
+		stopCurrentSong();
+		playList.nextSong();
+		playCurrentSong();
+		System.out.println("Switched to next audio file: stopped = false, paused = true");
 	}
 
 	public static void main(String[] args) {
