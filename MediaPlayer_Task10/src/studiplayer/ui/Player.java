@@ -46,6 +46,13 @@ public class Player extends Application {
 	private ChoiceBox<SortCriterion> sortChoiceBox = new ChoiceBox<>();
 	private TextField searchTextField = new TextField();
 	private Button filterButton = new Button("display");
+	private SongTable table;
+	private PlayerThread playerThread;
+	private Label pathLabel;
+	private Label songNameLabel;
+	private Label durationLabel;
+	private TimerThread timerThread = null;
+	private boolean songPaused = false;
 	
 	public Player() {}
 	
@@ -92,7 +99,7 @@ public class Player extends Application {
 		
 		// Table
 		setPlayList(path);
-		SongTable table = new SongTable(playList);
+		table = new SongTable(playList);
 		mainPane.setCenter(table);
 		
 		// Event handling using Lambda Expressions
@@ -108,18 +115,18 @@ public class Player extends Application {
 		songInfoBox.setHgap(10);
 		songInfoBox.setVgap(10);
 		
-		Label pathLabel = new Label(path);
+		pathLabel = new Label(path);
 		songInfoBox.add(playListLabel, 0, 0);
 		songInfoBox.add(pathLabel, 1, 0);
 
 		AudioFile song = playList.currentAudioFile();
 		String songName = song == null? NO_CURRENT_SONG: song.toString();
-		Label songNameLabel = new Label(songName);
+		songNameLabel = new Label(songName);
 		songInfoBox.add(currentSongLabel, 0, 1);
 		songInfoBox.add(songNameLabel, 1, 1);
 		
 		String songduration = song instanceof SampledFile ? ((SampledFile) song).formatDuration() : INITIAL_PLAY_TIME_LABEL;
-		Label durationLabel = new Label(songduration);
+		durationLabel = new Label(songduration);
 		songInfoBox.add(playTimeLabel, 0, 2);
 		songInfoBox.add(durationLabel, 1, 2);
 		
@@ -165,8 +172,10 @@ public class Player extends Application {
 		});
 		
 		table.setRowSelectionHandler(e -> {
-			stopCurrentSong();
-		});
+            stopCurrentSong();
+            playList.jumpToAudioFile(table.getSelectionModel().getSelectedItem().getAudioFile());
+            table.selectSong(table.getSelectionModel().getSelectedItem().getAudioFile());
+        });
 		
 		Scene scene = new Scene(mainPane, 600, 400);
 		stage.setScene(scene);
@@ -206,6 +215,14 @@ public class Player extends Application {
 	private void playCurrentSong() throws NotPlayableException {
 		setButtonStates(true, false, false, false);
 		AudioFile currentSong = playList.currentAudioFile();
+		if (songPaused) {
+			songPaused = false;
+			startThreads(true);
+			currentSong.togglePause();
+        } else {
+        	startThreads(false);
+        }
+        table.selectSong(currentSong);
 		System.out.println("Playing " + currentSong);
 		System.out.println("Filename is " + currentSong.getFilename());
 	}
@@ -213,13 +230,25 @@ public class Player extends Application {
 	private void pauseCurrentSong() {
 		setButtonStates(false, true, false, false);
 		AudioFile currentSong = playList.currentAudioFile();
+		if (songPaused) {
+			songPaused = false;
+			startThreads(true);
+        } else {
+        	songPaused = true;
+            threadTerminate(true);
+        }
+		currentSong.togglePause();
 		System.out.println("Pausing " + currentSong);
 		System.out.println("Filename is " + currentSong.getFilename());
 	}
 
 	private void stopCurrentSong() {
 		setButtonStates(false, true, true, false);
+		threadTerminate(false);
 		AudioFile currentSong = playList.currentAudioFile();
+		currentSong.stop();
+        updateSongInfo(null);
+		
 		System.out.println("Stopping " + currentSong);
 		System.out.println("Filename is " + currentSong.getFilename());
 	}
@@ -229,6 +258,8 @@ public class Player extends Application {
 		System.out.println("Switching to next audio file: stopped = false, paused = true");
 		stopCurrentSong();
 		playList.nextSong();
+		AudioFile currentSong = playList.currentAudioFile();
+		updateSongInfo(currentSong);
 		playCurrentSong();
 		System.out.println("Switched to next audio file: stopped = false, paused = true");
 	}
@@ -240,6 +271,88 @@ public class Player extends Application {
 		stopButton.setDisable(stopButtonState);
 	}
 	
+	private void updateSongInfo(AudioFile af) {
+		Platform.runLater(() -> {
+			if (af == null) {
+				songNameLabel.setText(NO_CURRENT_SONG);
+				durationLabel.setText(INITIAL_PLAY_TIME_LABEL);
+            } else {
+            	songNameLabel.setText(af.getTitle());
+                durationLabel.setText(af.formatPosition());
+			}
+		});
+	}
+	
+	public class PlayerThread extends Thread {
+		private boolean stopped = false;
+		public void terminate() {
+			stopped = true;
+		}
+		
+		@Override
+		public void run() {
+			while (!stopped) {
+				AudioFile currentSong = playList.currentAudioFile();
+				if (currentSong != null) {
+					try {
+						currentSong.play();
+					} catch (NotPlayableException e) {
+						e.printStackTrace();
+					}
+				}
+			}
+		}
+	}
+	
+	public class TimerThread extends Thread {
+		private boolean stopped = false;
+		public void terminate() {
+			stopped = true;
+		}
+		
+		@Override
+		public void run() {
+			while (!stopped) {
+				AudioFile currentSong = playList.currentAudioFile();
+				if (currentSong != null) {
+					updateSongInfo(playList.currentAudioFile());
+		                try {
+							Thread.sleep(100);
+						} catch (InterruptedException e) {
+							e.printStackTrace();
+						}
+				}
+			}
+		}
+	}
+	
+	private void startThreads(boolean onlyTimer) {
+		if (timerThread == null || !timerThread.isAlive()) {
+            timerThread = new TimerThread();
+            timerThread.start();
+        }
+
+        if (!onlyTimer) {
+            if (playerThread == null || !playerThread.isAlive()) {
+                playerThread = new PlayerThread();
+                playerThread.start();
+            }
+        }
+    }
+
+    private void threadTerminate(boolean onlyTimer) {
+        if (!onlyTimer) {
+            if (playerThread != null) {
+                playerThread.terminate();
+                playerThread = null;
+            }
+        }
+        if (timerThread != null) {
+            timerThread.terminate();
+            timerThread = null;
+        }
+    }
+    
 	public static void main(String[] args) {
 		launch();
 	}
