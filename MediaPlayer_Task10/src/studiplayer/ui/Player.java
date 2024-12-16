@@ -4,6 +4,7 @@ import java.io.File;
 import java.net.URL;
 
 import javafx.application.Application;
+import javafx.application.Platform;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
@@ -24,6 +25,7 @@ import javafx.stage.Stage;
 import studiplayer.audio.AudioFile;
 import studiplayer.audio.NotPlayableException;
 import studiplayer.audio.PlayList;
+import studiplayer.audio.SampledFile;
 import studiplayer.audio.SortCriterion;
 
 public class Player extends Application {
@@ -135,47 +137,35 @@ public class Player extends Application {
 		bottomBox.getChildren().addAll(songInfoBox, controlBox);
 		mainPane.setBottom(bottomBox);
 
+		playButton.setOnAction(e -> {
+			durationLabel.setText("00:00");
 			try {
 				playCurrentSong();
 			} catch (NotPlayableException e1) {
-				// TODO Auto-generated catch block
 				e1.printStackTrace();
 			}
-			durationLabel.setText("00:00");
-			playButton.setDisable(true);
-			pauseButton.setDisable(false);
-			stopButton.setDisable(false);
-			nextButton.setDisable(false);
 		});
 		
 		pauseButton.setOnAction(e -> {
-			playButton.setDisable(false);
-			pauseButton.setDisable(true);
-			stopButton.setDisable(false);
-			nextButton.setDisable(false);
-			pauseCurrentSong(pause_check);
+			pauseCurrentSong();
 		});
 		
 		stopButton.setOnAction(e -> {
-			playButton.setDisable(false);
-			stopButton.setDisable(true);
-			nextButton.setDisable(false);
 			durationLabel.setText("00:00");
 			stopCurrentSong();
 		});
 		
 		nextButton.setOnAction(e -> {
-			playButton.setDisable(false);
-			pauseButton.setDisable(false);
-			stopButton.setDisable(false);
-			nextButton.setDisable(true);
 			durationLabel.setText("00:00");
 			try {
 				nextSong();
 			} catch (NotPlayableException e1) {
-				// TODO Auto-generated catch block
 				e1.printStackTrace();
 			}
+		});
+		
+		table.setRowSelectionHandler(e -> {
+			stopCurrentSong();
 		});
 		
 		Scene scene = new Scene(mainPane, 600, 400);
@@ -214,27 +204,28 @@ public class Player extends Application {
 	}
 	
 	private void playCurrentSong() throws NotPlayableException {
+		setButtonStates(true, false, false, false);
 		AudioFile currentSong = playList.currentAudioFile();
-//		currentSong.play();
 		System.out.println("Playing " + currentSong);
 		System.out.println("Filename is " + currentSong.getFilename());
 	}
 
-	private void pauseCurrentSong(boolean pause_check) {
+	private void pauseCurrentSong() {
+		setButtonStates(false, true, false, false);
 		AudioFile currentSong = playList.currentAudioFile();
-		currentSong.togglePause();
 		System.out.println("Pausing " + currentSong);
 		System.out.println("Filename is " + currentSong.getFilename());
 	}
 
 	private void stopCurrentSong() {
+		setButtonStates(false, true, true, false);
 		AudioFile currentSong = playList.currentAudioFile();
-		currentSong.stop();
 		System.out.println("Stopping " + currentSong);
 		System.out.println("Filename is " + currentSong.getFilename());
 	}
 
 	private void nextSong() throws NotPlayableException {
+		setButtonStates(false, false, false, true);
 		System.out.println("Switching to next audio file: stopped = false, paused = true");
 		stopCurrentSong();
 		playList.nextSong();
@@ -242,6 +233,13 @@ public class Player extends Application {
 		System.out.println("Switched to next audio file: stopped = false, paused = true");
 	}
 
+	private void setButtonStates(boolean playButtonState, boolean pauseButtonState, boolean stopButtonState, boolean nextButtonState) {
+		playButton.setDisable(playButtonState);
+		pauseButton.setDisable(pauseButtonState);
+		nextButton.setDisable(nextButtonState);
+		stopButton.setDisable(stopButtonState);
+	}
+	
 	public static void main(String[] args) {
 		launch();
 	}
