@@ -40,23 +40,20 @@ public class Player extends Application {
 	private Button pauseButton = new Button("pause");
 	private Button stopButton = new Button("stop");
 	private Button nextButton = new Button("next");
-	private Label playListLabel = new Label("Playlist");
-	private Label currentSongLabel = new Label("Current Song");
-	private Label playTimeLabel = new Label("Playtime");
+	private Label playListLabel;
+	private Label currentSongLabel;
+	private Label playTimeLabel;
 	private ChoiceBox<SortCriterion> sortChoiceBox = new ChoiceBox<>();
 	private TextField searchTextField = new TextField();
 	private Button filterButton = new Button("display");
 	private SongTable table;
 	private PlayerThread playerThread;
-	private Label pathLabel;
-	private Label songNameLabel;
-	private Label durationLabel;
 	private TimerThread timerThread = null;
 	private boolean songPaused = false;
 	
 	public Player() {}
 	
-	public void start(Stage stage) {
+	public void start(Stage stage) throws Exception {
 		SortCriterion criterian = SortCriterion.AUTHOR;
 		String path = PLAYLIST_DIRECTORY + "/playList.cert.m3u";
 		if (!this.useCertPlayList) {
@@ -69,7 +66,7 @@ public class Player extends Application {
 		}
 		
 		BorderPane mainPane = new BorderPane();
-		stage.setTitle("Player");
+		stage.setTitle("APA Player");
 		
 		// Filter Box
 		TitledPane filterBox = new TitledPane();
@@ -115,26 +112,27 @@ public class Player extends Application {
 		songInfoBox.setHgap(10);
 		songInfoBox.setVgap(10);
 		
-		pathLabel = new Label(path);
-		songInfoBox.add(playListLabel, 0, 0);
-		songInfoBox.add(pathLabel, 1, 0);
+		playListLabel = new Label(path);
+		songInfoBox.add(new Label("Playlist"), 0, 0);
+		songInfoBox.add(playListLabel, 1, 0);
 
 		AudioFile song = playList.currentAudioFile();
 		String songName = song == null? NO_CURRENT_SONG: song.toString();
-		songNameLabel = new Label(songName);
-		songInfoBox.add(currentSongLabel, 0, 1);
-		songInfoBox.add(songNameLabel, 1, 1);
+		currentSongLabel = new Label(songName);
+		songInfoBox.add(new Label("Current Song"), 0, 1);
+		songInfoBox.add(currentSongLabel, 1, 1);
 		
 		String songduration = song instanceof SampledFile ? ((SampledFile) song).formatDuration() : INITIAL_PLAY_TIME_LABEL;
-		durationLabel = new Label(songduration);
-		songInfoBox.add(playTimeLabel, 0, 2);
-		songInfoBox.add(durationLabel, 1, 2);
+		playTimeLabel = new Label(songduration);
+		songInfoBox.add(new Label("Playtime"), 0, 2);
+		songInfoBox.add(playTimeLabel, 1, 2);
 		
 		// PlayBack Buttons
 		playButton = createButton("play.jpg");
 		pauseButton = createButton("pause.jpg");
 		stopButton = createButton("stop.jpg");
 		nextButton = createButton("next.jpg");
+		setButtonStates(false, true, true, false);
 
 		HBox controlBox = new HBox(10, playButton, pauseButton, stopButton, nextButton);
 		controlBox.setAlignment(Pos.CENTER);
@@ -145,12 +143,7 @@ public class Player extends Application {
 		mainPane.setBottom(bottomBox);
 
 		playButton.setOnAction(e -> {
-			durationLabel.setText("00:00");
-			try {
-				playCurrentSong();
-			} catch (NotPlayableException e1) {
-				e1.printStackTrace();
-			}
+			playCurrentSong();
 		});
 		
 		pauseButton.setOnAction(e -> {
@@ -158,17 +151,11 @@ public class Player extends Application {
 		});
 		
 		stopButton.setOnAction(e -> {
-			durationLabel.setText("00:00");
 			stopCurrentSong();
 		});
 		
 		nextButton.setOnAction(e -> {
-			durationLabel.setText("00:00");
-			try {
-				nextSong();
-			} catch (NotPlayableException e1) {
-				e1.printStackTrace();
-			}
+			nextSong();
 		});
 		
 		table.setRowSelectionHandler(e -> {
@@ -182,15 +169,27 @@ public class Player extends Application {
 		stage.show();
 	}
 	
+	public void setUseCertPlayList(boolean useCertPlayList) {
+		this.useCertPlayList = useCertPlayList;
+	}
+
 	public void setPlayList(String pathname) {
 		this.playList = new PlayList(pathname);
 	}
 	
-	public void loadPlayList(String pathname) throws NotPlayableException {
+	public void loadPlayList(String pathname) {
 		if (pathname == null || pathname.isEmpty()) {
-			this.playList.loadFromM3U(DEFAULT_PLAYLIST);
+			try {
+				this.playList.loadFromM3U(DEFAULT_PLAYLIST);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
 		} else {
-			this.playList.loadFromM3U(pathname);	
+			try {
+				this.playList.loadFromM3U(pathname);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}	
 		}
 	}
 	
@@ -212,8 +211,7 @@ public class Player extends Application {
 		return button;
 	}
 	
-	private void playCurrentSong() throws NotPlayableException {
-		setButtonStates(true, false, false, false);
+	private void playCurrentSong() {
 		AudioFile currentSong = playList.currentAudioFile();
 		if (songPaused) {
 			songPaused = false;
@@ -223,12 +221,12 @@ public class Player extends Application {
         	startThreads(false);
         }
         table.selectSong(currentSong);
+		setButtonStates(true, false, false, false);
 		System.out.println("Playing " + currentSong);
 		System.out.println("Filename is " + currentSong.getFilename());
 	}
 
 	private void pauseCurrentSong() {
-		setButtonStates(false, true, false, false);
 		AudioFile currentSong = playList.currentAudioFile();
 		if (songPaused) {
 			songPaused = false;
@@ -238,26 +236,27 @@ public class Player extends Application {
             threadTerminate(true);
         }
 		currentSong.togglePause();
+		setButtonStates(true, false, false, false);
 		System.out.println("Pausing " + currentSong);
 		System.out.println("Filename is " + currentSong.getFilename());
 	}
 
 	private void stopCurrentSong() {
-		setButtonStates(false, true, true, false);
 		threadTerminate(false);
 		AudioFile currentSong = playList.currentAudioFile();
 		currentSong.stop();
+		setButtonStates(false, true, true, false);
         updateSongInfo(null);
 		
 		System.out.println("Stopping " + currentSong);
 		System.out.println("Filename is " + currentSong.getFilename());
 	}
 
-	private void nextSong() throws NotPlayableException {
-		setButtonStates(false, false, false, true);
+	private void nextSong() {
 		System.out.println("Switching to next audio file: stopped = false, paused = true");
 		stopCurrentSong();
 		playList.nextSong();
+		setButtonStates(true, false, false, false);
 		AudioFile currentSong = playList.currentAudioFile();
 		updateSongInfo(currentSong);
 		playCurrentSong();
@@ -274,11 +273,11 @@ public class Player extends Application {
 	private void updateSongInfo(AudioFile af) {
 		Platform.runLater(() -> {
 			if (af == null) {
-				songNameLabel.setText(NO_CURRENT_SONG);
-				durationLabel.setText(INITIAL_PLAY_TIME_LABEL);
+				currentSongLabel.setText(NO_CURRENT_SONG);
+				playTimeLabel.setText(INITIAL_PLAY_TIME_LABEL);
             } else {
-            	songNameLabel.setText(af.getTitle());
-                durationLabel.setText(af.formatPosition());
+            	currentSongLabel.setText(af.getTitle());
+            	playTimeLabel.setText(af.formatPosition());
 			}
 		});
 	}
