@@ -165,6 +165,13 @@ public class Player extends Application {
         });
 		
 		Scene scene = new Scene(mainPane, 600, 400);
+		
+		stage.setOnCloseRequest(e -> {
+		    threadTerminate(false);
+		    Platform.exit();
+		    System.exit(0);
+		});
+
 		stage.setScene(scene);
 		stage.show();
 	}
